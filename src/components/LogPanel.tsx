@@ -4,7 +4,7 @@ import { useWorkflowStore } from '../store/workflowStore';
 
 const LogPanel: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { executionLogs, isRunning } = useWorkflowStore();
+  const { executionLogs, isExecuting } = useWorkflowStore();
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -36,14 +36,14 @@ const LogPanel: React.FC = () => {
     <div className={`bg-white border-t border-gray-200 transition-all duration-300 ${
       isExpanded ? 'h-80' : 'h-12'
     }`}>
-      {/* 顶部控制栏 */}
+      {/* Top control bar */}
       <div 
         className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
+            <div className={`w-2 h-2 rounded-full ${isExecuting ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
             <span className="text-sm font-medium text-gray-700">Execution Logs</span>
           </div>
           {executionLogs.length > 0 && (

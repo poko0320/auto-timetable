@@ -1,122 +1,301 @@
 import { create } from 'zustand';
-import { Node, Edge } from 'reactflow';
-import { ExecutionLog } from '../types';
+import { 
+  Node, 
+  Edge, 
+  addEdge, 
+  applyNodeChanges, 
+  applyEdgeChanges,
+  NodeChange,
+  EdgeChange,
+  Connection
+} from 'reactflow';
+import { NodeData, ExecutionLog, WorkflowExecution, NodeType, NodeStatus } from '../types';
+import { NODE_REGISTRY } from '../processors';
+import { WorkflowEngine } from '../engine/WorkflowEngine';
 
-interface WorkflowState {
-  nodes: Node[];
+interface WorkflowStore {
+  // Workflow state
+  nodes: Node<NodeData>[];
   edges: Edge[];
-  selectedNode: Node | null;
-  isRunning: boolean;
+  isExecuting: boolean;
   executionLogs: ExecutionLog[];
+  lastExecution?: WorkflowExecution;
+  
+  // UI state
+  selectedNodeId: string | null;
+  isPropertiesPanelOpen: boolean;
+  isChatPanelOpen: boolean;
+  
+  // Workflow actions
+  setNodes: (nodes: Node<NodeData>[]) => void;
+  setEdges: (edges: Edge[]) => void;
+  onNodesChange: (changes: NodeChange[]) => void;
+  onEdgesChange: (changes: EdgeChange[]) => void;
+  onConnect: (connection: Connection) => void;
   
   // Node management
-  setNodes: (nodes: Node[]) => void;
-  setEdges: (edges: Edge[]) => void;
-  addNode: (node: Node) => void;
-  updateNode: (id: string, data: any) => void;
-  updateNodeData: (id: string, data: any) => void;
-  deleteNode: (id: string) => void;
-  setSelectedNode: (node: Node | null) => void;
+  addNode: (type: NodeType, position: { x: number; y: number }) => void;
+  updateNodeConfig: (nodeId: string, config: any) => void;
+  updateNodeLabel: (nodeId: string, label: string) => void;
+  deleteNode: (nodeId: string) => void;
+  duplicateNode: (nodeId: string) => void;
   
-  // Execution management
-  setIsRunning: (running: boolean) => void;
-  addExecutionLog: (log: ExecutionLog) => void;
+  // Execution
+  executeWorkflow: () => Promise<void>;
+  stopExecution: () => void;
   clearLogs: () => void;
   
-  // Workflow operations
-  runWorkflow: () => Promise<void>;
-  stopWorkflow: () => void;
+  // UI actions
+  selectNode: (nodeId: string | null) => void;
+  togglePropertiesPanel: () => void;
+  toggleChatPanel: () => void;
 }
 
-export const useWorkflowStore = create<WorkflowState>((set, get) => ({
-  nodes: [],
-  edges: [],
-  selectedNode: null,
-  isRunning: false,
+const workflowEngine = new WorkflowEngine();
+
+export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
+  // Initial state
+  nodes: [
+    {
+      id: '1',
+      type: 'custom',
+      position: { x: 250, y: 100 },
+      data: {
+        label: 'Start',
+        type: 'start',
+        category: 'input-output',
+        status: 'idle',
+        config: {}
+      }
+    },
+    {
+      id: '2',
+      type: 'custom',
+      position: { x: 500, y: 100 },
+      data: {
+        label: 'LLM Processing',
+        type: 'llm',
+        category: 'ai-llm',
+        status: 'idle',
+        config: {
+          provider: 'openai',
+          model: 'gpt-3.5-turbo',
+          prompt: 'Process the input data: {{input}}',
+          temperature: 0.7,
+          maxTokens: 1000,
+          outputFormat: 'text'
+        }
+      }
+    },
+    {
+      id: '3',
+      type: 'custom',
+      position: { x: 750, y: 100 },
+      data: {
+        label: 'End',
+        type: 'end',
+        category: 'input-output',
+        status: 'idle',
+        config: {}
+      }
+    }
+  ],
+  edges: [
+    {
+      id: 'e1-2',
+      source: '1',
+      target: '2',
+      type: 'smoothstep',
+      animated: true
+    },
+    {
+      id: 'e2-3',
+      source: '2',
+      target: '3',
+      type: 'smoothstep',
+      animated: true
+    }
+  ],
+  isExecuting: false,
   executionLogs: [],
-  
+  selectedNodeId: null,
+  isPropertiesPanelOpen: false,
+  isChatPanelOpen: false,
+
+  // Actions
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
   
-  addNode: (node) => set((state) => ({
-    nodes: [...state.nodes, node]
-  })),
+  onNodesChange: (changes) => {
+    set({
+      nodes: applyNodeChanges(changes, get().nodes)
+    });
+  },
   
-  updateNode: (id, data) => set((state) => ({
-    nodes: state.nodes.map(node => 
-      node.id === id ? { ...node, data: { ...node.data, ...data } } : node
-    ),
-    selectedNode: state.selectedNode?.id === id 
-      ? { ...state.selectedNode, data: { ...state.selectedNode.data, ...data } }
-      : state.selectedNode
-  })),
-
-  updateNodeData: (id: string, data: any) => set((state) => ({
-    nodes: state.nodes.map(node => 
-      node.id === id ? { ...node, data } : node
-    ),
-    selectedNode: state.selectedNode?.id === id 
-      ? { ...state.selectedNode, data }
-      : state.selectedNode
-  })),
+  onEdgesChange: (changes) => {
+    set({
+      edges: applyEdgeChanges(changes, get().edges)
+    });
+  },
   
-  deleteNode: (id) => set((state) => ({
-    nodes: state.nodes.filter(node => node.id !== id),
-    edges: state.edges.filter(edge => edge.source !== id && edge.target !== id)
-  })),
+  onConnect: (connection) => {
+    set({
+      edges: addEdge({
+        ...connection,
+        type: 'smoothstep',
+        animated: true
+      }, get().edges)
+    });
+  },
   
-  setSelectedNode: (node) => set({ selectedNode: node }),
-  setIsRunning: (running) => set({ isRunning: running }),
+  addNode: (type, position) => {
+    const nodeDefinition = NODE_REGISTRY[type];
+    if (!nodeDefinition) return;
+    
+    const newNode: Node<NodeData> = {
+      id: `node_${Date.now()}`,
+      type: 'custom',
+      position,
+      data: {
+        label: nodeDefinition.label,
+        type: nodeDefinition.type,
+        category: nodeDefinition.category,
+        status: 'idle',
+        config: { ...nodeDefinition.defaultConfig }
+      }
+    };
+    
+    set({
+      nodes: [...get().nodes, newNode]
+    });
+  },
   
-  addExecutionLog: (log) => set((state) => ({
-    executionLogs: [...state.executionLogs, log]
-  })),
+  updateNodeConfig: (nodeId, config) => {
+    set({
+      nodes: get().nodes.map(node => 
+        node.id === nodeId 
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                config: { ...node.data?.config, ...config }
+              }
+            }
+          : node
+      )
+    });
+  },
   
-  clearLogs: () => set({ executionLogs: [] }),
+  updateNodeLabel: (nodeId, label) => {
+    set({
+      nodes: get().nodes.map(node => 
+        node.id === nodeId 
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                label
+              }
+            }
+          : node
+      )
+    });
+  },
   
-  runWorkflow: async () => {
-    const { nodes, edges, addExecutionLog } = get();
-    set({ isRunning: true });
+  deleteNode: (nodeId) => {
+    set({
+      nodes: get().nodes.filter(node => node.id !== nodeId),
+      edges: get().edges.filter(edge => 
+        edge.source !== nodeId && edge.target !== nodeId
+      ),
+      selectedNodeId: get().selectedNodeId === nodeId ? null : get().selectedNodeId
+    });
+  },
+  
+  duplicateNode: (nodeId) => {
+    const node = get().nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    
+    const newNode: Node<NodeData> = {
+      ...node,
+      id: `node_${Date.now()}`,
+      position: {
+        x: node.position.x + 50,
+        y: node.position.y + 50
+      }
+    };
+    
+    set({
+      nodes: [...get().nodes, newNode]
+    });
+  },
+  
+  executeWorkflow: async () => {
+    const { nodes, edges } = get();
+    
+    set({ 
+      isExecuting: true, 
+      executionLogs: [],
+      nodes: nodes.map(node => ({
+        ...node,
+        data: { ...node.data, status: 'idle' as const }
+      }))
+    });
     
     try {
-      // Simulate workflow execution
-      for (const node of nodes) {
-        addExecutionLog({
-          id: `${Date.now()}-${node.id}`,
-          workflowId: 'current',
-          nodeId: node.id,
-          status: 'running',
-          message: `Executing node: ${node.data.label}`,
-          timestamp: new Date()
-        });
+      const execution = await workflowEngine.executeWorkflow(nodes, edges);
+      
+      // Update node statuses based on execution results
+      const updatedNodes = nodes.map(node => {
+        const result = execution.nodeResults[node.id];
+        const status: NodeStatus = result ? (result.success ? 'success' : 'error') : 'idle';
         
-        // Simulate processing time
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        addExecutionLog({
-          id: `${Date.now()}-${node.id}-complete`,
-          workflowId: 'current',
-          nodeId: node.id,
-          status: 'success',
-          message: `Node execution completed: ${node.data.label}`,
-          timestamp: new Date()
-        });
-      }
-    } catch (error) {
-      addExecutionLog({
-        id: `${Date.now()}-error`,
-        workflowId: 'current',
-        nodeId: 'system',
-        status: 'error',
-        message: `Execution error: ${error}`,
-        timestamp: new Date()
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            status,
+            lastExecution: result ? {
+              timestamp: new Date(),
+              duration: result.metadata?.executionTime || 0,
+              success: result.success,
+              error: result.error
+            } : undefined
+          }
+        };
       });
-    } finally {
-      set({ isRunning: false });
+      
+      set({
+        nodes: updatedNodes,
+        lastExecution: execution,
+        executionLogs: workflowEngine.getExecutionLogs(),
+        isExecuting: false
+      });
+      
+    } catch (error) {
+      set({
+        isExecuting: false,
+        executionLogs: workflowEngine.getExecutionLogs()
+      });
     }
   },
   
-  stopWorkflow: () => {
-    set({ isRunning: false });
-  }
+  stopExecution: () => {
+    set({ isExecuting: false });
+  },
+  
+  clearLogs: () => {
+    workflowEngine.clearLogs();
+    set({ executionLogs: [] });
+  },
+  
+  selectNode: (nodeId) => set({ selectedNodeId: nodeId }),
+  
+  togglePropertiesPanel: () => set((state) => ({ 
+    isPropertiesPanelOpen: !state.isPropertiesPanelOpen 
+  })),
+  
+  toggleChatPanel: () => set((state) => ({ 
+    isChatPanelOpen: !state.isChatPanelOpen 
+  }))
 }));

@@ -142,7 +142,7 @@ const getNodeProperties = (nodeType: string): NodeProperty[] => {
 };
 
 const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({ node, onClose }) => {
-  const { updateNodeData } = useWorkflowStore();
+  const { updateNodeConfig, updateNodeLabel } = useWorkflowStore();
   const [config, setConfig] = useState<Record<string, any>>({});
 
   useEffect(() => {
@@ -161,11 +161,8 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({ node, onClose
     const newConfig = { ...config, [key]: value };
     setConfig(newConfig);
     
-    // Update the node data in the store
-    updateNodeData(node.id, {
-      ...node.data,
-      config: newConfig
-    });
+    // Update the node config in the store
+    updateNodeConfig(node.id, newConfig);
   };
 
   const getIcon = (nodeType: string) => {
@@ -285,7 +282,7 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({ node, onClose
             <input
               type="text"
               value={node.data.label}
-              onChange={(e) => updateNodeData(node.id, { ...node.data, label: e.target.value })}
+              onChange={(e) => updateNodeLabel(node.id, e.target.value)}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>

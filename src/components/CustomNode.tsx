@@ -10,7 +10,11 @@ import {
   Users,
   ArrowUpDown,
   Merge,
-  Table
+  Table,
+  Play,
+  Check,
+  X,
+  Loader
 } from 'lucide-react';
 
 interface CustomNodeProps {
@@ -40,88 +44,127 @@ const getIcon = (type: string) => {
   return iconMap[type] || Database;
 };
 
-const getColor = (type: string) => {
-  const colorMap: Record<string, string> = {
-    file: 'bg-blue-500',
-    text: 'bg-green-500',
-    sheets: 'bg-yellow-500',
-    data: 'bg-purple-500',
-    filter: 'bg-red-500',
-    merge: 'bg-cyan-500',
-    group: 'bg-lime-500',
-    sort: 'bg-orange-500',
-    javascript: 'bg-indigo-500',
-    geocode: 'bg-pink-500',
-    colorize: 'bg-teal-500',
-    custom: 'bg-gray-500',
+const getStatusIcon = (status?: string) => {
+  switch (status) {
+    case 'running':
+      return <Loader size={12} className="animate-spin text-blue-600" />;
+    case 'success':
+      return <Check size={12} className="text-green-600" />;
+    case 'error':
+      return <X size={12} className="text-red-600" />;
+    default:
+      return <Play size={12} className="text-gray-400" />;
+  }
+};
+
+const getNodeColor = (type: string) => {
+  const colorMap: Record<string, { bg: string; border: string; icon: string }> = {
+    file: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'text-blue-600' },
+    text: { bg: 'bg-green-50', border: 'border-green-200', icon: 'text-green-600' },
+    sheets: { bg: 'bg-amber-50', border: 'border-amber-200', icon: 'text-amber-600' },
+    data: { bg: 'bg-purple-50', border: 'border-purple-200', icon: 'text-purple-600' },
+    filter: { bg: 'bg-red-50', border: 'border-red-200', icon: 'text-red-600' },
+    merge: { bg: 'bg-cyan-50', border: 'border-cyan-200', icon: 'text-cyan-600' },
+    group: { bg: 'bg-lime-50', border: 'border-lime-200', icon: 'text-lime-600' },
+    sort: { bg: 'bg-orange-50', border: 'border-orange-200', icon: 'text-orange-600' },
+    javascript: { bg: 'bg-indigo-50', border: 'border-indigo-200', icon: 'text-indigo-600' },
+    geocode: { bg: 'bg-pink-50', border: 'border-pink-200', icon: 'text-pink-600' },
+    colorize: { bg: 'bg-teal-50', border: 'border-teal-200', icon: 'text-teal-600' },
+    custom: { bg: 'bg-gray-50', border: 'border-gray-200', icon: 'text-gray-600' },
   };
-  return colorMap[type] || 'bg-gray-500';
+  return colorMap[type] || colorMap.custom;
 };
 
 const CustomNode: React.FC<CustomNodeProps> = ({ data, selected }) => {
   const Icon = getIcon(data.type);
-  const colorClass = getColor(data.type);
+  const colors = getNodeColor(data.type);
 
   return (
     <div className={`
-      bg-white rounded-xl border-2 transition-all duration-200 cursor-pointer shadow-lg
-      min-w-[80px] max-w-[100px] p-3 relative
-      ${selected ? 'ring-2 ring-blue-400 ring-offset-2' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'}
-      ${data.status === 'running' ? 'border-blue-400 shadow-lg shadow-blue-100' : ''}
-      ${data.status === 'success' ? 'border-green-400 shadow-lg shadow-green-100' : ''}
-      ${data.status === 'error' ? 'border-red-400 shadow-lg shadow-red-100' : ''}
+      relative rounded-lg border-2 transition-all duration-200 cursor-pointer
+      min-w-[140px] max-w-[180px] p-0 overflow-hidden
+      ${selected ? 'ring-2 ring-blue-400 ring-offset-2 shadow-lg' : 'shadow-sm hover:shadow-md'}
+      ${data.status === 'running' ? 'ring-2 ring-blue-400 shadow-lg' : ''}
+      ${data.status === 'success' ? 'ring-2 ring-green-400 shadow-lg' : ''}
+      ${data.status === 'error' ? 'ring-2 ring-red-400 shadow-lg' : ''}
+      ${colors.bg} ${colors.border}
     `}>
+      {/* Dotted background pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <svg width="100%" height="100%" className="w-full h-full">
+          <defs>
+            <pattern id={`dots-${data.type}`} x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.5" fill="currentColor" className={colors.icon} opacity="0.3"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#dots-${data.type})`}/>
+        </svg>
+      </div>
+
       {/* Input Handle */}
       <Handle
         type="target"
-        position={Position.Top}
-        className="w-3 h-3 !bg-blue-500 !border-2 !border-white"
+        position={Position.Left}
+        className="w-3 h-3 !bg-gray-400 !border-2 !border-white shadow-sm"
         style={{ 
-          background: '#3b82f6',
+          background: '#9ca3af',
           border: '2px solid white',
-          top: -6
+          left: -6
         }}
       />
       
-      {/* Node Content */}
-      <div className="flex flex-col items-center text-center space-y-2">
-        {/* Icon */}
-        <div className={`w-10 h-10 rounded-full ${colorClass} flex items-center justify-center shadow-sm`}>
-          <Icon size={18} className="text-white" />
+      {/* Node Header */}
+      <div className="relative px-3 py-2 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className={`p-1.5 rounded ${colors.icon}`}>
+              <Icon size={16} />
+            </div>
+            <span className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+              {data.type}
+            </span>
+          </div>
+          <div className="flex items-center">
+            {getStatusIcon(data.status)}
+          </div>
         </div>
-        
-        {/* Label */}
-        <div className="text-xs font-medium text-gray-700 leading-tight">
+      </div>
+
+      {/* Node Content */}
+      <div className="relative px-3 py-3">
+        <div className="text-sm font-medium text-gray-800 leading-tight">
           {data.label}
         </div>
         
-        {/* Status Indicator */}
-        {data.status && data.status !== 'idle' && (
-          <div className="flex items-center space-x-1">
-            {data.status === 'running' && (
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            )}
-            {data.status === 'success' && (
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            )}
-            {data.status === 'error' && (
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            )}
-          </div>
-        )}
+        {/* Connection indicators */}
+        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+          <span className="flex items-center space-x-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+            <span>Input</span>
+          </span>
+          <span className="flex items-center space-x-1">
+            <span>Output</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+          </span>
+        </div>
       </div>
       
       {/* Output Handle */}
       <Handle
         type="source"
-        position={Position.Bottom}
-        className="w-3 h-3 !bg-blue-500 !border-2 !border-white"
+        position={Position.Right}
+        className="w-3 h-3 !bg-gray-400 !border-2 !border-white shadow-sm"
         style={{ 
-          background: '#3b82f6',
+          background: '#9ca3af',
           border: '2px solid white',
-          bottom: -6
+          right: -6
         }}
       />
+
+      {/* Running indicator */}
+      {data.status === 'running' && (
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse shadow-sm"></div>
+      )}
     </div>
   );
 };

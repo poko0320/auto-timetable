@@ -2,110 +2,75 @@ import { useState, useEffect } from 'react';
 import { useWorkflowStore } from '../store/workflowStore';
 
 export const useWorkflowExecution = () => {
-  const { nodes, edges, isRunning, addExecutionLog } = useWorkflowStore();
+  const { nodes, edges, isExecuting, executeWorkflow } = useWorkflowStore();
   const [executionProgress, setExecutionProgress] = useState(0);
 
-  const executeNode = async (nodeId: string, nodeData: any) => {
-    addExecutionLog({
-      id: `${Date.now()}-${nodeId}`,
-      workflowId: 'current',
-      nodeId,
-      status: 'running',
-      message: `Starting execution: ${nodeData.label}`,
-      timestamp: new Date()
-    });
-
-    // Simulate node execution time
-    const executionTime = Math.random() * 2000 + 1000;
-    await new Promise(resolve => setTimeout(resolve, executionTime));
-
-    // Simulate success/failure probability
-    const success = Math.random() > 0.1; // 90% success rate
-
-    if (success) {
-      addExecutionLog({
-        id: `${Date.now()}-${nodeId}-success`,
-        workflowId: 'current',
-        nodeId,
-        status: 'success',
-        message: `Execution successful: ${nodeData.label}`,
-        timestamp: new Date(),
-        data: { executionTime, result: 'Simulated execution result' }
-      });
-    } else {
-      addExecutionLog({
-        id: `${Date.now()}-${nodeId}-error`,
-        workflowId: 'current',
-        nodeId,
-        status: 'error',
-        message: `Execution failed: ${nodeData.label}`,
-        timestamp: new Date(),
-        data: { error: 'Simulated execution error' }
-      });
-      throw new Error(`Node execution failed: ${nodeData.label}`);
-    }
-
-    return { success, data: { executionTime } };
+  const startExecution = async () => {
+    setExecutionProgress(0);
+    await executeWorkflow();
+    setExecutionProgress(100);
   };
+
+  // Calculate progress based on node statuses
+  useEffect(() => {
+    if (isExecuting) {
+      const completedNodes = nodes.filter(node => 
+        node.data?.status === 'success' || node.data?.status === 'error'
+      ).length;
+      const progress = nodes.length > 0 ? (completedNodes / nodes.length) * 100 : 0;
+      setExecutionProgress(progress);
+    }
+  }, [nodes, isExecuting]);
 
   return {
-    executeNode,
-    executionProgress
+    nodes,
+    edges,
+    isExecuting,
+    executionProgress,
+    startExecution
   };
 };
 
-export const useLocalStorage = <T>(key: string, initialValue: T) => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
-    }
-  });
-
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
-    }
+// Hook for managing node properties
+export const useNodeProperties = (nodeId: string | null) => {
+  const { nodes } = useWorkflowStore();
+  
+  const selectedNode = nodeId ? nodes.find(node => node.id === nodeId) : null;
+  
+  return {
+    selectedNode
   };
-
-  return [storedValue, setValue] as const;
 };
 
+// Hook for keyboard shortcuts
 export const useKeyboardShortcuts = () => {
-  const { runWorkflow, stopWorkflow, clearLogs, isRunning } = useWorkflowStore();
+  const { executeWorkflow, stopExecution, clearLogs, isExecuting } = useWorkflowStore();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl/Cmd + R: 运行/停止工作流
+      // Ctrl/Cmd + R: Run/Stop workflow
       if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
         event.preventDefault();
-        if (isRunning) {
-          stopWorkflow();
+        if (isExecuting) {
+          stopExecution();
         } else {
-          runWorkflow();
+          executeWorkflow();
         }
       }
 
-      // Ctrl/Cmd + L: 清空日志
+      // Ctrl/Cmd + L: Clear logs
       if ((event.ctrlKey || event.metaKey) && event.key === 'l') {
         event.preventDefault();
         clearLogs();
       }
 
-      // ESC: 停止执行
-      if (event.key === 'Escape' && isRunning) {
-        stopWorkflow();
+      // ESC: Stop execution
+      if (event.key === 'Escape' && isExecuting) {
+        stopExecution();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [runWorkflow, stopWorkflow, clearLogs, isRunning]);
+  }, [executeWorkflow, stopExecution, clearLogs, isExecuting]);
 };

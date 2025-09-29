@@ -3,13 +3,13 @@ import { Play, Save, Settings, Pause, RotateCcw, Users, Copy, Code, Link } from 
 import { useWorkflowStore } from '../store/workflowStore';
 
 const TopBar: React.FC = () => {
-  const { isRunning, runWorkflow, stopWorkflow, clearLogs } = useWorkflowStore();
+  const { isExecuting, executeWorkflow, stopExecution, clearLogs } = useWorkflowStore();
 
   const handleRun = () => {
-    if (isRunning) {
-      stopWorkflow();
+    if (isExecuting) {
+      stopExecution();
     } else {
-      runWorkflow();
+      executeWorkflow();
     }
   };
 
@@ -53,13 +53,13 @@ const TopBar: React.FC = () => {
             onClick={handleRun}
             disabled={false}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-white transition-colors ${
-              isRunning 
+              isExecuting 
                 ? 'bg-red-500 hover:bg-red-600' 
                 : 'bg-green-500 hover:bg-green-600'
             }`}
           >
-            {isRunning ? <Pause size={16} /> : <Play size={16} />}
-            <span className="text-sm font-medium">{isRunning ? 'Stop' : 'Run'}</span>
+            {isExecuting ? <Pause size={16} /> : <Play size={16} />}
+            <span className="text-sm font-medium">{isExecuting ? 'Stop' : 'Run'}</span>
           </button>
           
           <div className="flex items-center space-x-1 bg-gray-50 rounded-lg p-1">
@@ -91,9 +91,9 @@ const TopBar: React.FC = () => {
           </button>
           
           <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
+            <div className={`w-2 h-2 rounded-full ${isExecuting ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
             <span className="text-xs text-gray-600">
-              {isRunning ? 'Running' : 'Ready'}
+              {isExecuting ? 'Running' : 'Ready'}
             </span>
           </div>
           

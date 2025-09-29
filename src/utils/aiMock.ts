@@ -17,9 +17,9 @@ export const mockAIChat = async (message: string): Promise<AIResponse> => {
   const lowerMessage = message.toLowerCase();
 
   // Simple pattern matching for different types of requests
-  if (lowerMessage.includes('csv') || lowerMessage.includes('excel') || lowerMessage.includes('数据分析')) {
+  if (lowerMessage.includes('csv') || lowerMessage.includes('excel') || lowerMessage.includes('data analysis')) {
     return {
-      message: "我可以帮您创建一个数据分析工作流！基于您的需求，我建议以下步骤：\n\n1. 首先添加文件输入节点来读取CSV/Excel文件\n2. 然后添加过滤节点来清洗数据\n3. 最后添加JavaScript节点进行自定义分析\n\n您想要处理什么类型的数据呢？",
+      message: "I can help you create a data analysis workflow! Based on your needs, I suggest the following steps:\n\n1. First, add a file input node to read CSV/Excel files\n2. Then add a filter node to clean the data\n3. Finally, add a JavaScript node for custom analysis\n\nWhat type of data would you like to process?",
       suggestions: [
         {
           type: 'create_node',
@@ -28,7 +28,7 @@ export const mockAIChat = async (message: string): Promise<AIResponse> => {
             position: { x: 100, y: 100 },
             config: { acceptedTypes: ['.csv', '.xlsx'] }
           },
-          description: '创建文件输入节点'
+          description: 'Create file input node'
         },
         {
           type: 'create_node',
@@ -37,35 +37,35 @@ export const mockAIChat = async (message: string): Promise<AIResponse> => {
             position: { x: 300, y: 100 },
             config: { filterType: 'contains' }
           },
-          description: '添加数据过滤器'
+          description: 'Add data filter'
         }
       ]
     };
   }
 
-  if (lowerMessage.includes('javascript') || lowerMessage.includes('代码') || lowerMessage.includes('js')) {
+  if (lowerMessage.includes('javascript') || lowerMessage.includes('code') || lowerMessage.includes('js')) {
     return {
-      message: "我来帮您编写JavaScript代码！请告诉我您想要实现什么功能。\n\n例如：\n- 数据转换和处理\n- 统计计算\n- 格式化输出\n- API调用\n\n这是一个简单的数据处理示例：",
+      message: "I'll help you write JavaScript code! Please tell me what functionality you want to implement.\n\nFor example:\n- Data transformation and processing\n- Statistical calculations\n- Format output\n- API calls\n\nHere's a simple data processing example:",
       code: `function processData(input) {
-  // 数据验证
+  // Data validation
   if (!input || !Array.isArray(input.data)) {
-    throw new Error('输入数据格式错误');
+    throw new Error('Invalid input data format');
   }
   
-  // 数据处理
+  // Data processing
   const processed = input.data
-    .filter(row => row.value > 0) // 过滤正值
+    .filter(row => row.value > 0) // Filter positive values
     .map(row => ({
       ...row,
       processed: true,
       timestamp: new Date().toISOString()
     }));
   
-  // 返回结果
+  // Return result
   return {
     data: processed,
     count: processed.length,
-    summary: '数据处理完成'
+    summary: 'Data processing completed'
   };
 }`,
       suggestions: [
@@ -75,46 +75,46 @@ export const mockAIChat = async (message: string): Promise<AIResponse> => {
             type: 'javascript',
             position: { x: 200, y: 150 }
           },
-          description: '创建JavaScript执行节点'
+          description: 'Create JavaScript execution node'
         }
       ]
     };
   }
 
-  if (lowerMessage.includes('连接') || lowerMessage.includes('connect') || lowerMessage.includes('workflow')) {
+  if (lowerMessage.includes('connect') || lowerMessage.includes('workflow') || lowerMessage.includes('link')) {
     return {
-      message: "工作流连接很简单！您可以：\n\n1. 从源节点的输出端点（底部蓝色圆点）拖拽到目标节点的输入端点（顶部蓝色圆点）\n2. 确保数据流向合理，避免循环依赖\n3. 每个节点完成后，数据会自动传递给下一个节点\n\n需要我帮您设计特定的工作流结构吗？",
+      message: "Workflow connections are simple! You can:\n\n1. Drag from the source node's output handle (bottom blue dot) to the target node's input handle (top blue dot)\n2. Ensure logical data flow and avoid circular dependencies\n3. After each node completes, data automatically passes to the next node\n\nWould you like me to help design a specific workflow structure?",
       suggestions: [
         {
           type: 'workflow_template',
           data: {
-            name: '基础数据处理流',
+            name: 'Basic Data Processing Flow',
             nodes: ['file', 'filter', 'sort', 'javascript']
           },
-          description: '创建标准数据处理工作流'
+          description: 'Create standard data processing workflow'
         }
       ]
     };
   }
 
-  if (lowerMessage.includes('帮助') || lowerMessage.includes('help') || lowerMessage.includes('怎么')) {
+  if (lowerMessage.includes('help') || lowerMessage.includes('how') || lowerMessage.includes('what')) {
     return {
-      message: "欢迎使用AutoFlow！我是您的AI助手，可以帮您：\n\n🔧 **创建工作流**\n- 拖拽左侧组件到画布\n- 连接节点创建数据流\n\n⚙️ **配置节点**\n- 点击节点打开属性面板\n- 设置节点参数和选项\n\n▶️ **执行工作流**\n- 点击顶部运行按钮\n- 查看执行日志和结果\n\n💬 **AI助手**\n- 描述您的需求，我来推荐方案\n- 生成代码和配置\n\n您想从哪里开始呢？",
+      message: "Welcome to AutoFlow! I'm your AI assistant and can help you with:\n\n🔧 **Creating Workflows**\n- Drag components from the sidebar to the canvas\n- Connect nodes to create data flows\n\n⚙️ **Configuring Nodes**\n- Click on nodes to open the properties panel\n- Set node parameters and options\n\n▶️ **Running Workflows**\n- Click the run button in the top bar\n- View execution logs and results\n\n💬 **AI Assistant**\n- Describe your needs and I'll recommend solutions\n- Generate code and configurations\n\nWhere would you like to start?",
       suggestions: [
         {
           type: 'workflow_template',
           data: {
-            name: '新手入门模板'
+            name: 'Getting Started Template'
           },
-          description: '查看入门教程'
+          description: 'View tutorial guide'
         }
       ]
     };
   }
 
-  if (lowerMessage.includes('api') || lowerMessage.includes('接口') || lowerMessage.includes('http')) {
+  if (lowerMessage.includes('api') || lowerMessage.includes('http')) {
     return {
-      message: "API集成功能正在开发中！目前您可以使用JavaScript节点来调用API：\n\n```javascript\nasync function callAPI(input) {\n  const response = await fetch('https://api.example.com/data', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(input)\n  });\n  \n  return await response.json();\n}\n```\n\n未来版本将支持专门的HTTP请求节点！",
+      message: "API integration is under development! Currently you can use JavaScript nodes to call APIs:\n\n```javascript\nasync function callAPI(input) {\n  const response = await fetch('https://api.example.com/data', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(input)\n  });\n  \n  return await response.json();\n}\n```\n\nFuture versions will support dedicated HTTP request nodes!",
       code: `async function apiCall(input) {
   try {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
@@ -144,15 +144,15 @@ export const mockAIChat = async (message: string): Promise<AIResponse> => {
 
   // Default response
   const responses = [
-    "这是个很有趣的问题！我正在思考最佳的解决方案...",
-    "根据您的描述，我建议您先尝试创建一个简单的工作流来测试。",
-    "您可以详细描述一下您想要实现的功能吗？这样我能给出更精确的建议。",
-    "让我们一步步来解决这个问题。首先，您需要处理什么类型的数据？",
-    "好的想法！在AutoFlow中实现这个功能有几种方式，让我为您推荐最适合的方案。"
+    "That's an interesting question! I'm thinking about the best solution...",
+    "Based on your description, I suggest you try creating a simple workflow to test first.",
+    "Could you describe in detail what functionality you want to implement? This way I can give more precise advice.",
+    "Let's solve this step by step. First, what type of data do you need to process?",
+    "Great idea! There are several ways to implement this feature in AutoFlow. Let me recommend the most suitable approach for you."
   ];
 
   return {
     message: responses[Math.floor(Math.random() * responses.length)] + 
-             "\n\n您可以尝试以下关键词来获得更具体的帮助：\n- \"数据分析\" - 创建数据处理工作流\n- \"JavaScript\" - 获取代码示例\n- \"帮助\" - 查看功能介绍\n- \"连接\" - 学习如何连接节点"
+             "\n\nYou can try the following keywords for more specific help:\n- \"data analysis\" - Create data processing workflows\n- \"javascript\" - Get code examples\n- \"help\" - View feature introduction\n- \"connect\" - Learn how to connect nodes"
   };
 };

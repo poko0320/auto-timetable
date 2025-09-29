@@ -55,7 +55,7 @@ const AIChatPanel: React.FC = () => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: '抱歉，我遇到了一些问题。请稍后再试。',
+        content: 'Sorry, I encountered an issue. Please try again later.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);

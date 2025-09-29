@@ -10,15 +10,11 @@ import ReactFlow, {
   Background,
   MiniMap,
   BackgroundVariant,
-  NodeTypes,
 } from 'reactflow';
 
-import CustomNode from './CustomNode';
+import { nodeTypes } from './nodes/nodeTypes';
+import { NODE_REGISTRY } from '../processors';
 import { useWorkflowStore } from '../store/workflowStore';
-
-const NODE_TYPES: NodeTypes = Object.freeze({
-  custom: CustomNode,
-});
 
 // Initial nodes - empty for clean start
 const INITIAL_NODES: Node[] = [];
@@ -32,7 +28,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
   const [nodeIdCounter, setNodeIdCounter] = useState(1); // Start from 1
 
-  const { setSelectedNode, isRunning } = useWorkflowStore();
+  const { selectNode, isExecuting } = useWorkflowStore();
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -45,14 +41,16 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         sourceHandle: params.sourceHandle,
         targetHandle: params.targetHandle,
         type: 'smoothstep',
-        animated: isRunning,
+        animated: isExecuting,
         style: { 
-          stroke: '#94a3b8', 
-          strokeWidth: 2 
+          stroke: isExecuting ? '#3b82f6' : '#6b7280', 
+          strokeWidth: 2,
+          strokeDasharray: isExecuting ? '5,5' : undefined
         },
+        markerEnd: 'arrowclosed'
       }, eds));
     },
-    [setEdges, isRunning]
+    [setEdges, isExecuting]
   );
 
   const onDrop = useCallback(
@@ -69,35 +67,24 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         return;
       }
 
-      // Use ReactFlow's project method to get correct position
+      // 计算相对于画布的精确位置，添加偏移以避免节点被鼠标遮挡
       const position = {
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
+        x: event.clientX - reactFlowBounds.left - 100,
+        y: event.clientY - reactFlowBounds.top - 50,
       };
 
       console.log('Drop position:', position, 'Client:', { x: event.clientX, y: event.clientY });
 
-      const nodeLabels: Record<string, string> = {
-        file: 'File',
-        text: 'Text',
-        sheets: 'Sheets',
-        data: 'Example data',
-        filter: 'Filter',
-        merge: 'Merge',
-        group: 'Group',
-        sort: 'Sort',
-        javascript: 'Javascript',
-        geocode: 'Geocode',
-        colorize: 'Colorize',
-        custom: 'Custom data'
-      };
+      // 使用节点注册器获取节点信息
+      const nodeInfo = Object.values(NODE_REGISTRY).find(info => info.type === nodeType);
+      const nodeLabel = nodeInfo?.label || 'Unknown Node';
 
       const newNode: Node = {
         id: `node-${nodeIdCounter}`,
-        type: 'custom',
+        type: nodeType, // 直接使用拖拽的节点类型
         position,
         data: { 
-          label: nodeLabels[nodeType] || 'New Node',
+          label: nodeLabel,
           type: nodeType,
           status: 'idle'
         },
@@ -117,23 +104,23 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
   }, []);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-    setSelectedNode(node);
+    selectNode(node.id);
     onNodeSelect?.(node);
-  }, [setSelectedNode, onNodeSelect]);
+  }, [selectNode, onNodeSelect]);
 
   // Update edge animation when workflow is running
   React.useEffect(() => {
     setEdges((eds) =>
       eds.map((edge) => ({
         ...edge,
-        animated: isRunning,
+        animated: isExecuting,
         style: {
           ...edge.style,
-          stroke: isRunning ? '#3b82f6' : '#94a3b8',
+          stroke: isExecuting ? '#3b82f6' : '#94a3b8',
         }
       }))
     );
-  }, [isRunning, setEdges]);
+  }, [isExecuting, setEdges]);
 
   return (
     <div className="flex-1 h-full bg-gray-50">
@@ -146,9 +133,9 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeClick={onNodeClick}
-        nodeTypes={NODE_TYPES}
+        nodeTypes={nodeTypes}
         snapToGrid={true}
-        snapGrid={[15, 15]}
+        snapGrid={[20, 20]}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         minZoom={0.1}
         maxZoom={2}
@@ -156,42 +143,24 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         proOptions={{ hideAttribution: true }}
         deleteKeyCode={['Backspace', 'Delete']}
         multiSelectionKeyCode={['Meta', 'Control']}
+        panOnScroll={true}
+        selectionOnDrag={true}
+        panOnDrag={[1, 2]}
       >
         <Background 
           variant={BackgroundVariant.Dots} 
-          gap={16} 
-          size={1} 
-          color="#e2e8f0"
-          className="bg-white"
+          gap={24} 
+          size={1.5} 
+          color="#e5e7eb"
+          className="bg-gray-50"
         />
         
         <Controls 
-          position="top-right"
+          position="bottom-right"
           showInteractive={false}
-          className="bg-white border border-gray-200 rounded-lg shadow-sm"
-        />
-        
-        <MiniMap 
-          position="top-left"
-          nodeColor={(node) => {
-            const colorMap: Record<string, string> = {
-              file: '#3b82f6',
-              text: '#10b981', 
-              sheets: '#f59e0b',
-              data: '#8b5cf6',
-              filter: '#ef4444',
-              merge: '#06b6d4',
-              group: '#84cc16',
-              sort: '#f97316',
-              javascript: '#6366f1',
-              geocode: '#ec4899',
-              colorize: '#14b8a6',
-              custom: '#6b7280'
-            };
-            return colorMap[node.data?.type] || '#6b7280';
-          }}
-          maskColor="rgba(0, 0, 0, 0.1)"
-          className="bg-white border border-gray-200 rounded-lg"
+          showZoom={true}
+          showFitView={true}
+          className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm"
         />
       </ReactFlow>
       
