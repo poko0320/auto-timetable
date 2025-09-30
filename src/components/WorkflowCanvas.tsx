@@ -59,29 +59,24 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
 
       const reactFlowBounds = event.currentTarget.getBoundingClientRect();
       const nodeType = event.dataTransfer.getData('application/reactflow');
-
-      console.log('Drop event:', { nodeType, reactFlowBounds });
-
+      
       if (!nodeType) {
-        console.log('No node type found in drag data');
         return;
       }
-
-      // 计算相对于画布的精确位置，添加偏移以避免节点被鼠标遮挡
+      
+      // Calculate precise position relative to canvas, with offset to avoid cursor overlap
       const position = {
         x: event.clientX - reactFlowBounds.left - 100,
         y: event.clientY - reactFlowBounds.top - 50,
       };
 
-      console.log('Drop position:', position, 'Client:', { x: event.clientX, y: event.clientY });
-
-      // 使用节点注册器获取节点信息
+      // Get node information from registry
       const nodeInfo = Object.values(NODE_REGISTRY).find(info => info.type === nodeType);
       const nodeLabel = nodeInfo?.label || 'Unknown Node';
 
       const newNode: Node = {
         id: `node-${nodeIdCounter}`,
-        type: nodeType, // 直接使用拖拽的节点类型
+        type: nodeType,
         position,
         data: { 
           label: nodeLabel,
@@ -91,7 +86,6 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         draggable: true,
       };
 
-      console.log('Creating new node:', newNode);
       setNodes((nds) => nds.concat(newNode));
       setNodeIdCounter(prev => prev + 1);
     },
@@ -104,6 +98,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
   }, []);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    console.log('Node clicked:', node); // 调试日志
     selectNode(node.id);
     onNodeSelect?.(node);
   }, [selectNode, onNodeSelect]);

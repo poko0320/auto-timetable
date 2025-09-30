@@ -1,8 +1,18 @@
 # AutoFlow - Professional AI Workflow Builder
 
-A production-grade visual workflow automation platform with AI capabilities, designed for building complex data processing pipelines.
+A production-grade visual workflow automation platform with AI capabilities, designed for building complex data processing pipelines. Built with React, TypeScript, and ReactFlow.
 
-## Quick Start
+## ✨ Features
+
+- 🎨 **Visual Workflow Designer** - Drag-and-drop interface with 20+ specialized node types
+- 🤖 **AI Integration** - LLM nodes, agents, and knowledge retrieval
+- 🔄 **Flow Control** - Conditional logic, loops, and iterations  
+- 🛠️ **Data Processing** - String manipulation, math calculations, HTTP requests
+- 💾 **State Management** - Zustand-based reactive state
+- 🎯 **Type Safety** - Full TypeScript coverage
+- 🎪 **Modern UI** - Tailwind CSS with animations and responsive design
+
+## 🚀 Quick Start
 
 ```bash
 # Install dependencies
@@ -14,40 +24,42 @@ pnpm start
 # Build for production
 pnpm build
 
-# Run tests
+# Run tests  
 pnpm test --passWithNoTests --watchAll=false
 ```
 
-## Project Architecture
+## 🏗️ Architecture Overview
 
-### Core Structure
+### Node Categories
 
-```
-src/
-├── components/                 # React components
-│   ├── nodes/                 # Node components (NEW!)
-│   │   ├── base/              # Base node infrastructure
-│   │   │   └── BaseNode.tsx   # Core node component
-│   │   ├── input-output/      # I/O node types
-│   │   │   ├── StartNode.tsx
-│   │   │   ├── EndNode.tsx
-│   │   │   ├── HttpRequestNode.tsx
-│   │   │   ├── FileUploadNode.tsx
-│   │   │   └── DatabaseNode.tsx
-│   │   ├── ai-llm/           # AI & LLM nodes
-│   │   │   ├── LLMNode.tsx
-│   │   │   ├── AgentNode.tsx
-│   │   │   ├── KnowledgeRetrievalNode.tsx
-│   │   │   └── QuestionClassificationNode.tsx
-│   │   ├── logic/            # Logic control nodes
-│   │   │   ├── IfElseNode.tsx
-│   │   │   ├── LoopNode.tsx
-│   │   │   └── IterationNode.tsx
-│   │   ├── transform/        # Data transformation
-│   │   │   ├── CodeNode.tsx
-│   │   │   ├── TemplateNode.tsx
-│   │   │   ├── VariableAssignNode.tsx
-│   │   │   └── VariableAggregatorNode.tsx
+#### 🟢 Input/Output Layer
+- **Start Node** - Workflow entry point
+- **End Node** - Workflow completion  
+- **HTTP Request** - API calls and webhooks
+- **File Upload** - File processing
+- **Database** - Data persistence
+
+#### 🟣 AI & LLM Layer  
+- **LLM Node** - Language model processing
+- **Agent** - Autonomous AI agents with tools
+- **Knowledge Retrieval** - RAG and search
+- **Question Classification** - Intent routing
+
+#### 🟠 Logic Layer
+- **IF/ELSE** - Conditional branching
+- **Loop** - Iterative processing  
+- **Iteration** - Collection processing
+
+#### 🔵 Transform Layer
+- **Code** - Custom JavaScript execution
+- **Template** - Text templating with variables
+- **String Processor** - Text manipulation
+- **Math Calculator** - Mathematical operations
+- **Variable Operations** - Data assignment and aggregation
+
+#### 🟡 Utilities Layer
+- **Delay** - Time-based delays
+- **Webhook** - HTTP endpoint handling
 │   │   ├── utilities/        # Utility nodes
 │   │   │   ├── DelayNode.tsx
 │   │   │   └── WebhookNode.tsx

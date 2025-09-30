@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
-import { ChevronUp, ChevronDown, AlertCircle, CheckCircle, Play, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronUp, ChevronDown, AlertCircle, CheckCircle, Play, Clock, Zap, Info } from 'lucide-react';
 import { useWorkflowStore } from '../store/workflowStore';
 
 const LogPanel: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { executionLogs, isExecuting } = useWorkflowStore();
+  const { executionLogs, isExecuting, lastExecution } = useWorkflowStore();
+
+  // Auto-expand when execution starts
+  useEffect(() => {
+    if (isExecuting) {
+      setIsExpanded(true);
+    }
+  }, [isExecuting]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'running':
-        return <Play size={14} className="text-blue-500" />;
+        return <Play size={14} className="text-blue-500 animate-pulse" />;
       case 'success':
         return <CheckCircle size={14} className="text-green-500" />;
       case 'error':
         return <AlertCircle size={14} className="text-red-500" />;
+      case 'warning':
+        return <AlertCircle size={14} className="text-yellow-500" />;
       default:
         return <Clock size={14} className="text-gray-400" />;
     }
@@ -27,9 +36,17 @@ const LogPanel: React.FC = () => {
         return 'bg-green-50 border-green-200 text-green-800';
       case 'error':
         return 'bg-red-50 border-red-200 text-red-800';
+      case 'warning':
+        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
       default:
         return 'bg-gray-50 border-gray-200 text-gray-600';
     }
+  };
+
+  const formatDuration = (ms: number) => {
+    if (ms < 1000) return `${ms}ms`;
+    if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+    return `${(ms / 60000).toFixed(1)}m`;
   };
 
   return (
