@@ -20,10 +20,12 @@ import {
   StringProcessorNode,
   MathCalculatorNode,
   DelayNode,
-  WebhookNode
+  WebhookNode,
+  ScreenCaptureNode
 } from './';
+import EvalNodeRenderer from './eval/EvalNodeRenderer';
 
-// 节点类型映射
+// Node type mappings
 export const nodeTypes: NodeTypes = {
   // Input/Output
   start: StartNode,
@@ -53,7 +55,11 @@ export const nodeTypes: NodeTypes = {
   
   // Utilities
   delay: DelayNode,
-  webhook: WebhookNode
+  webhook: WebhookNode,
+  screenCapture: ScreenCaptureNode,
+  
+  // Eval Nodes
+  evalNode: EvalNodeRenderer
 };
 
 export default nodeTypes;

@@ -12,7 +12,7 @@ export type NodeType =
   | 'code' | 'template' | 'variableAggregator' | 'variableAssign' 
   | 'stringProcessor' | 'mathCalculator'
   // Utilities Layer
-  | 'delay' | 'webhook';
+  | 'delay' | 'webhook' | 'screenCapture';
 
 export type NodeCategory = 'input-output' | 'ai-llm' | 'logic' | 'transform' | 'utilities';
 

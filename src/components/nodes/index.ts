@@ -27,6 +27,7 @@ export { default as MathCalculatorNode } from './transform/MathCalculatorNode';
 // Utility Nodes
 export { default as DelayNode } from './utilities/DelayNode';
 export { default as WebhookNode } from './utilities/WebhookNode';
+export { default as ScreenCaptureNode } from './utilities/ScreenCaptureNode';
 
 // Base Node
 export { default as BaseNode } from './base/BaseNode';

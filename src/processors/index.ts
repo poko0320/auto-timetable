@@ -7,6 +7,7 @@ import { HttpRequestProcessor } from './HttpRequestProcessor';
 import { CodeProcessor } from './CodeProcessor';
 import { StringProcessor } from './StringProcessor';
 import { MathCalculatorProcessor } from './MathCalculatorProcessor';
+import { ScreenCaptureProcessor } from './ScreenCaptureProcessor';
 
 // Simple processors for basic nodes
 class StartProcessor extends BaseProcessor {
@@ -326,6 +327,22 @@ export const NODE_REGISTRY: Record<NodeType, NodeDefinition> = {
     processorClass: DefaultProcessor,
     schema: new DefaultProcessor().getSchema(),
     defaultConfig: {}
+  },
+  
+  screenCapture: {
+    type: 'screenCapture',
+    category: 'utilities',
+    label: 'Screen Capture',
+    description: 'Capture screenshots and screen recordings',
+    icon: 'camera',
+    color: '#6366F1',
+    processorClass: ScreenCaptureProcessor,
+    schema: new ScreenCaptureProcessor().getSchema(),
+    defaultConfig: {
+      captureMode: 'fullScreen',
+      outputPath: './screenshot.png',
+      imageFormat: 'png'
+    }
   }
 };
 

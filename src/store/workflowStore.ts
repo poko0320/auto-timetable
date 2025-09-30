@@ -66,7 +66,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   nodes: [
     {
       id: '1',
-      type: 'custom',
+      type: 'start',
       position: { x: 250, y: 100 },
       data: {
         label: 'Start',
@@ -78,7 +78,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
     },
     {
       id: '2',
-      type: 'custom',
+      type: 'llm',
       position: { x: 500, y: 100 },
       data: {
         label: 'LLM Processing',
@@ -97,7 +97,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
     },
     {
       id: '3',
-      type: 'custom',
+      type: 'end',
       position: { x: 750, y: 100 },
       data: {
         label: 'End',
@@ -162,7 +162,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
     
     const newNode: Node<NodeData> = {
       id: `node_${Date.now()}`,
-      type: 'custom',
+      type: nodeDefinition.type, // Use actual node type instead of 'custom'
       position,
       data: {
         label: nodeDefinition.label,

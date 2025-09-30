@@ -1,188 +1,372 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
+  Zap, 
   Play, 
-  Save, 
-  Settings, 
-  Pause, 
+  Square, 
   RotateCcw, 
-  Users, 
-  Copy, 
-  Code, 
-  Link,
-  Download,
-  Upload,
-  Plus,
-  Zap,
-  Layers,
-  Clock
+  Save, 
+  Upload, 
+  Download, 
+  Settings,
+  AlertTriangle,
+  Shield,
+  UserPlus,
+  X,
+  Mail,
+  Copy,
+  Check
 } from 'lucide-react';
-import { useWorkflowStore } from '../store/workflowStore';
-import { useSuccessToast, useErrorToast, useInfoToast } from './ToastProvider';
 
-const TopBar: React.FC = () => {
-  const { isExecuting, executeWorkflow, stopExecution, clearLogs, saveWorkflow, exportWorkflow, importWorkflow, newWorkflow } = useWorkflowStore();
-  const showSuccess = useSuccessToast();
-  const showError = useErrorToast();
-  const showInfo = useInfoToast();
+interface TopBarProps {
+  currentPage: string;
+  onPageChange: (page: string) => void;
+  evalModeEnabled: boolean;
+  evalModeConfirmed: boolean;
+  onEvalModeToggle: (enabled: boolean) => void;
+}
 
-  const handleRun = () => {
-    if (isExecuting) {
-      stopExecution();
-      showInfo('Workflow Stopped', 'Execution has been halted');
+export function TopBar({ currentPage, onPageChange, evalModeEnabled, evalModeConfirmed, onEvalModeToggle }: TopBarProps) {
+  const [showEvalWarning, setShowEvalWarning] = useState(false);
+  const [showInviteDropdown, setShowInviteDropdown] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteLink, setInviteLink] = useState('https://autoflow.app/invite/abc123');
+  const [linkCopied, setLinkCopied] = useState(false);
+  const inviteDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (inviteDropdownRef.current && !inviteDropdownRef.current.contains(event.target as Node)) {
+        setShowInviteDropdown(false);
+      }
+    };
+
+    if (showInviteDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showInviteDropdown]);
+
+  const handleEvalModeClick = () => {
+    if (!evalModeEnabled) {
+      if (evalModeConfirmed) {
+        // If already confirmed, enable directly
+        onEvalModeToggle(true);
+      } else {
+        // First time usage, show warning
+        setShowEvalWarning(true);
+      }
     } else {
-      executeWorkflow();
-      showInfo('Workflow Started', 'Executing workflow nodes...');
+      onEvalModeToggle(false);
     }
   };
 
-  const handleSave = () => {
+  const confirmEvalMode = () => {
+    setShowEvalWarning(false);
+    onEvalModeToggle(true);
+  };
+
+  const cancelEvalMode = () => {
+    setShowEvalWarning(false);
+  };
+
+  const handleInviteClick = () => {
+    setShowInviteDropdown(!showInviteDropdown);
+  };
+
+  const handleSendInvite = () => {
+    if (inviteEmail.trim()) {
+      // TODO: Implement invite sending logic
+      console.log('Sending invite to:', inviteEmail);
+      setInviteEmail('');
+      // Add success notification here
+    }
+  };
+
+  const handleCopyLink = async () => {
     try {
-      const workflow = saveWorkflow();
-      showSuccess('Workflow Saved', `Saved as "${workflow.name}"`);
-    } catch (error) {
-      showError('Save Failed', 'Unable to save workflow');
+      await navigator.clipboard.writeText(inviteLink);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
     }
   };
 
-  const handleExport = () => {
-    try {
-      exportWorkflow();
-      showSuccess('Workflow Exported', 'Download should start automatically');
-    } catch (error) {
-      showError('Export Failed', 'Unable to export workflow');
-    }
-  };
-
-  const handleImport = async () => {
-    try {
-      await importWorkflow();
-      showSuccess('Workflow Imported', 'Workflow loaded successfully');
-    } catch (error) {
-      showError('Import Failed', 'Unable to import workflow');
-    }
-  };
-
-  const handleNew = () => {
-    if (confirm('Create new workflow? Unsaved changes will be lost.')) {
-      newWorkflow();
-      showInfo('New Workflow', 'Started with a blank canvas');
-    }
-  };
-
-  const handleClearLogs = () => {
-    clearLogs();
+  const closeInviteDropdown = () => {
+    setShowInviteDropdown(false);
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3">
-      <div className="flex items-center justify-between">
-        {/* Left side - Logo and title */}
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AF</span>
+    <>
+      <header className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Left side - Logo and Navigation */}
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gray-900">AutoFlow</span>
+              </div>
+
+              {/* Navigation Tabs */}
+              <nav className="flex space-x-1">
+                <button
+                  onClick={() => onPageChange('workflow')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === 'workflow'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  Workflow
+                </button>
+                <button
+                  onClick={() => onPageChange('templates')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === 'templates'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  Templates
+                </button>
+                <button
+                  onClick={() => onPageChange('integrations')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === 'integrations'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  Integrations
+                </button>
+              </nav>
             </div>
-            <h1 className="text-lg font-semibold text-gray-900">AutoFlow</h1>
+
+            {/* Center - Workflow Controls (only show on workflow page) */}
+            {currentPage === 'workflow' && (
+              <div className="flex items-center space-x-3">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  <Play size={16} />
+                  <span>Run</span>
+                </button>
+                
+                <button className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                  <Square size={16} />
+                  <span>Stop</span>
+                </button>
+                
+                <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  <RotateCcw size={18} />
+                </button>
+                
+                <div className="w-px h-6 bg-gray-300"></div>
+                
+                <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Save size={18} />
+                </button>
+                
+                <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Upload size={18} />
+                </button>
+                
+                <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Download size={18} />
+                </button>
+              </div>
+            )}
+
+            {/* Right side - Status and Settings */}
+            <div className="flex items-center space-x-4">
+              {/* Eval Mode Toggle - Icon only */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleEvalModeClick}
+                  className={`relative p-2 rounded-lg transition-all ${
+                    evalModeEnabled
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  title={evalModeEnabled ? 'Eval Mode Active' : 'Safe Mode'}
+                >
+                  <Shield size={18} />
+                  {evalModeEnabled && (
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  )}
+                </button>
+              </div>
+
+              {/* Invite Button */}
+              <div className="relative" ref={inviteDropdownRef}>
+                <button
+                  onClick={handleInviteClick}
+                  className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                  title="Invite collaborators"
+                >
+                  <UserPlus size={18} />
+                </button>
+
+                {/* Invite Dropdown */}
+                {showInviteDropdown && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-medium text-gray-900">Invite Collaborators</h3>
+                        <button
+                          onClick={closeInviteDropdown}
+                          className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      
+                      {/* Email Invite */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Invite by email
+                        </label>
+                        <div className="flex space-x-2">
+                          <input
+                            type="email"
+                            value={inviteEmail}
+                            onChange={(e) => setInviteEmail(e.target.value)}
+                            placeholder="Enter email address"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendInvite()}
+                          />
+                          <button
+                            onClick={handleSendInvite}
+                            disabled={!inviteEmail.trim()}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm"
+                          >
+                            <Mail size={14} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Share Link */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Share link
+                        </label>
+                        <div className="flex space-x-2">
+                          <input
+                            type="text"
+                            value={inviteLink}
+                            readOnly
+                            className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-600"
+                          />
+                          <button
+                            onClick={handleCopyLink}
+                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center space-x-1"
+                          >
+                            {linkCopied ? (
+                              <>
+                                <Check size={14} className="text-green-600" />
+                                <span>Copied</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={14} />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Anyone with this link can join as a collaborator
+                        </p>
+                      </div>
+                      
+                      {/* Current Collaborators */}
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Current collaborators</div>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
+                              Y
+                            </div>
+                            <span className="text-sm text-gray-600">You (Owner)</span>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Invite collaborators to work together on this workflow
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Ready</span>
+              </div>
+              
+              <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <Settings size={18} />
+              </button>
+            </div>
           </div>
-          
-          {/* Navigation */}
-          <nav className="flex items-center space-x-1">
-            <button className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              Workflows
-            </button>
-            <button className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              Templates
-            </button>
-            <button className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
-              History
-            </button>
-          </nav>
         </div>
-        
-        {/* Center - Workflow controls */}
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={handleRun}
-            disabled={false}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
-              isExecuting 
-                ? 'bg-red-500 hover:bg-red-600' 
-                : 'bg-green-500 hover:bg-green-600'
-            }`}
-          >
-            {isExecuting ? <Pause size={16} /> : <Play size={16} />}
-            <span className="text-sm">{isExecuting ? 'Stop Execution' : 'Run Workflow'}</span>
-          </button>
-          
-          <button
-            onClick={handleClearLogs}
-            className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            title="Clear execution logs"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span className="text-sm">Clear</span>
-          </button>
-          
-          <div className="flex items-center space-x-1 bg-gray-50 rounded-lg p-1">
-            <button 
-              onClick={handleNew}
-              className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
-              title="New workflow"
-            >
-              <Code size={14} />
-              <span className="text-sm">New</span>
-            </button>
+      </header>
+
+      {/* Eval Mode Warning Modal */}
+      {showEvalWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">Enable Eval Mode?</h3>
+                <p className="text-sm text-gray-500">Advanced automation capabilities</p>
+              </div>
+            </div>
             
-            <button 
-              onClick={handleSave}
-              className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
-              title="Save workflow"
-            >
-              <Save size={14} />
-              <span className="text-sm">Save</span>
-            </button>
+            <div className="mb-6">
+              <p className="text-sm text-gray-700 mb-3">
+                Eval Mode unlocks advanced automation nodes with enhanced system access. This includes:
+              </p>
+              <ul className="text-sm text-gray-600 space-y-1 ml-4">
+                <li>• System monitoring and process control</li>
+                <li>• Network scanning and operations</li>
+                <li>• Advanced automation scripts</li>
+                <li>• Fun prank and entertainment features</li>
+              </ul>
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-xs text-yellow-800">
+                  ⚠️ Use responsibly and only on systems you own or have permission to modify.
+                </p>
+              </div>
+            </div>
             
-            <button 
-              onClick={handleExport}
-              className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
-              title="Export workflow"
-            >
-              <Copy size={14} />
-              <span className="text-sm">Export</span>
-            </button>
-            
-            <button 
-              onClick={handleImport}
-              className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
-              title="Import workflow"
-            >
-              <Link size={14} />
-              <span className="text-sm">Import</span>
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={cancelEvalMode}
+                className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmEvalMode}
+                className="flex-1 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+              >
+                Enable Eval Mode
+              </button>
+            </div>
           </div>
         </div>
-        
-        {/* Right side - User and settings */}
-        <div className="flex items-center space-x-3">
-          <button className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-            <Users size={16} />
-            <span className="text-sm">Invite</span>
-          </button>
-          
-          <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${isExecuting ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
-            <span className="text-xs text-gray-600">
-              {isExecuting ? 'Running' : 'Ready'}
-            </span>
-          </div>
-          
-          <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-            <Settings size={18} />
-          </button>
-        </div>
-      </div>
-    </header>
+      )}
+    </>
   );
-};
+}
 
 export default TopBar;

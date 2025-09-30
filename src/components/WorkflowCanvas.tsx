@@ -2,10 +2,7 @@ import React, { useCallback, useState } from 'react';
 import ReactFlow, {
   Node,
   Edge,
-  addEdge,
   Connection,
-  useNodesState,
-  useEdgesState,
   Controls,
   Background,
   MiniMap,
@@ -13,44 +10,30 @@ import ReactFlow, {
 } from 'reactflow';
 
 import { nodeTypes } from './nodes/nodeTypes';
-import { NODE_REGISTRY } from '../processors';
 import { useWorkflowStore } from '../store/workflowStore';
-
-// Initial nodes - empty for clean start
-const INITIAL_NODES: Node[] = [];
 
 interface WorkflowCanvasProps {
   onNodeSelect?: (node: Node) => void;
+  evalModeEnabled?: boolean;
 }
 
-const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>(INITIAL_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
-  const [nodeIdCounter, setNodeIdCounter] = useState(1); // Start from 1
-
-  const { selectNode, isExecuting } = useWorkflowStore();
+const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect, evalModeEnabled = false }) => {  
+  const { 
+    nodes, 
+    edges, 
+    onNodesChange, 
+    onEdgesChange, 
+    onConnect: storeOnConnect,
+    addNode,
+    selectNode, 
+    isExecuting 
+  } = useWorkflowStore();
 
   const onConnect = useCallback(
     (params: Connection) => {
-      if (!params.source || !params.target) return;
-      
-      setEdges((eds) => addEdge({
-        id: `edge-${Date.now()}`,
-        source: params.source,
-        target: params.target,
-        sourceHandle: params.sourceHandle,
-        targetHandle: params.targetHandle,
-        type: 'smoothstep',
-        animated: isExecuting,
-        style: { 
-          stroke: isExecuting ? '#3b82f6' : '#6b7280', 
-          strokeWidth: 2,
-          strokeDasharray: isExecuting ? '5,5' : undefined
-        },
-        markerEnd: 'arrowclosed'
-      }, eds));
+      storeOnConnect(params);
     },
-    [setEdges, isExecuting]
+    [storeOnConnect]
   );
 
   const onDrop = useCallback(
@@ -64,32 +47,16 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
         return;
       }
       
-      // Calculate precise position relative to canvas, with offset to avoid cursor overlap
+      // Calculate more precise position relative to the ReactFlow viewport
       const position = {
-        x: event.clientX - reactFlowBounds.left - 100,
-        y: event.clientY - reactFlowBounds.top - 50,
+        x: event.clientX - reactFlowBounds.left - 60, // Center the node on cursor
+        y: event.clientY - reactFlowBounds.top - 30,  // Center the node on cursor
       };
 
-      // Get node information from registry
-      const nodeInfo = Object.values(NODE_REGISTRY).find(info => info.type === nodeType);
-      const nodeLabel = nodeInfo?.label || 'Unknown Node';
-
-      const newNode: Node = {
-        id: `node-${nodeIdCounter}`,
-        type: nodeType,
-        position,
-        data: { 
-          label: nodeLabel,
-          type: nodeType,
-          status: 'idle'
-        },
-        draggable: true,
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-      setNodeIdCounter(prev => prev + 1);
+      // Use store's addNode method
+      addNode(nodeType as any, position);
     },
-    [nodeIdCounter, setNodes]
+    [addNode]
   );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
@@ -103,19 +70,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect }) => {
     onNodeSelect?.(node);
   }, [selectNode, onNodeSelect]);
 
-  // Update edge animation when workflow is running
-  React.useEffect(() => {
-    setEdges((eds) =>
-      eds.map((edge) => ({
-        ...edge,
-        animated: isExecuting,
-        style: {
-          ...edge.style,
-          stroke: isExecuting ? '#3b82f6' : '#94a3b8',
-        }
-      }))
-    );
-  }, [isExecuting, setEdges]);
+  // Update edge animation is now handled by the store
 
   return (
     <div className="flex-1 h-full bg-gray-50">
