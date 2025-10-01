@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'reactflow/dist/style.css';
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom ReactFlow Selection Box Styles */
+.react-flow__selection {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 2px solid rgb(59, 130, 246) !important;
+  border-radius: 8px !important;
+}
+
+/* Node Selection Styles */
+.react-flow__node.selected {
+  outline: none !important;
+}
+
+/* Handle Styles */
+.react-flow__handle {
+  background: #6b7280 !important;
+  border: 2px solid white !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-flow__handle:hover {
+  background: #374151 !important;
+  transform: scale(1.1) !important;
+}
+
+.react-flow__handle-connecting {
+  background: #3b82f6 !important;
+  transform: scale(1.2) !important;
+}
+
+/* Edge Styles */
+.react-flow__edge-path {
+  stroke: #6b7280;
+  stroke-width: 2;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #3b82f6;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #4b5563;
+}
