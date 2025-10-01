@@ -46,7 +46,7 @@ const templates: Template[] = [
     id: '1',
     name: 'Email Marketing Automation',
     description: 'Automated email sequences with personalization and analytics',
-    category: 'AI助手',
+    category: 'AI Helper',
     tags: ['email', 'marketing', 'automation'],
     icon: <Mail className="w-6 h-6" />,
     featured: true,
@@ -72,7 +72,7 @@ const templates: Template[] = [
     id: '2',
     name: 'Data Processing Pipeline',
     description: 'Clean, transform and analyze large datasets automatically',
-    category: '数据处理',
+    category: 'Data Processing',
     tags: ['data', 'processing', 'analytics'],
     icon: <Database className="w-6 h-6" />,
     featured: true,
@@ -100,7 +100,7 @@ const templates: Template[] = [
     id: '3',
     name: 'Discord Bot Notifications',
     description: 'Real-time notifications and alerts through Discord',
-    category: '通知自动化',
+    category: 'Automatic Notification',
     tags: ['discord', 'notifications', 'alerts'],
     icon: <Zap className="w-6 h-6" />,
     featured: false,
@@ -126,7 +126,7 @@ const templates: Template[] = [
     id: '4',
     name: 'AI Content Generator',
     description: 'Generate and publish content using AI models',
-    category: 'AI助手',
+    category: 'AI Helper',
     tags: ['ai', 'content', 'generation'],
     icon: <Bot className="w-6 h-6" />,
     featured: true,
@@ -154,7 +154,7 @@ const templates: Template[] = [
     id: '5',
     name: 'API Integration Hub',
     description: 'Connect and sync data between multiple APIs',
-    category: 'API集成',
+    category: 'API Integration',
     tags: ['api', 'integration', 'sync'],
     icon: <Globe className="w-6 h-6" />,
     featured: false,
@@ -184,7 +184,7 @@ const templates: Template[] = [
     id: '6',
     name: 'Scheduled Reports',
     description: 'Generate and send automated reports on schedule',
-    category: '数据处理',
+    category: 'Data Processing',
     tags: ['reports', 'scheduling', 'automation'],
     icon: <Clock className="w-6 h-6" />,
     featured: false,
@@ -212,7 +212,7 @@ const templates: Template[] = [
   }
 ];
 
-const categories = ['全部', '数据处理', 'AI助手', '通知自动化', 'API集成'];
+const categories = ['All', 'Data Processing', 'AI Helper', 'Automatic Notification', 'API Integration'];
 
 interface TemplatesPageProps {
   onPageChange?: (page: string) => void;
@@ -220,7 +220,7 @@ interface TemplatesPageProps {
 
 export default function TemplatesPage({ onPageChange }: TemplatesPageProps = {}) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('全部');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [importingTemplate, setImportingTemplate] = useState<string | null>(null);
   const { setNodes, setEdges, newWorkflow } = useWorkflowStore();
@@ -229,7 +229,7 @@ export default function TemplatesPage({ onPageChange }: TemplatesPageProps = {})
     const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          template.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === '全部' || template.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || template.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -372,7 +372,7 @@ export default function TemplatesPage({ onPageChange }: TemplatesPageProps = {})
         </div>
 
         {/* Featured Templates */}
-        {selectedCategory === '全部' && (
+        {selectedCategory === 'All' && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Templates</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -439,7 +439,7 @@ export default function TemplatesPage({ onPageChange }: TemplatesPageProps = {})
         {/* All Templates */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {selectedCategory === '全部' ? 'All Templates' : selectedCategory} 
+            {selectedCategory === 'All' ? 'All Templates' : selectedCategory} 
             <span className="text-lg text-gray-500 font-normal ml-2">({filteredTemplates.length})</span>
           </h2>
           
