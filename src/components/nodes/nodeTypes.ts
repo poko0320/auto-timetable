@@ -58,8 +58,37 @@ export const nodeTypes: NodeTypes = {
   delay: DelayNode,
   webhook: WebhookNode,
   screenCapture: ScreenCaptureNode,
+  
   // Register all eval node types to EvalNodeRenderer
-  ...Object.fromEntries(EVAL_MODE_NODES.map(node => [node.id, EvalNodeRenderer]))
+  // The key must match the node.id from EVAL_MODE_NODES
+  'system-monitor': EvalNodeRenderer,
+  'discord-caller': EvalNodeRenderer,
+  'network-scanner': EvalNodeRenderer,
+  'prank-notifier': EvalNodeRenderer,
+  'auto-typer': EvalNodeRenderer,
+  'file-watcher': EvalNodeRenderer,
+  'mouse-jiggler': EvalNodeRenderer,
+  'screen-recorder': EvalNodeRenderer,
+  'system-info': EvalNodeRenderer,
+  'port-scanner': EvalNodeRenderer,
+  'dns-resolver': EvalNodeRenderer,
+  'fake-crash': EvalNodeRenderer,
+  'keyboard-logger': EvalNodeRenderer,
+  'web-crawler': EvalNodeRenderer,
+  'window-manipulator': EvalNodeRenderer,
+  'sound-player': EvalNodeRenderer,
+  'clipboard-monitor': EvalNodeRenderer,
+  'process-killer': EvalNodeRenderer,
+  'network-traffic': EvalNodeRenderer,
+  'desktop-wallpaper': EvalNodeRenderer,
+  'systemMonitor': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'discordCaller': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'networkScanner': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'prankNotifier': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'autoTyper': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'fileWatcher': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'mouseJiggler': EvalNodeRenderer,  // Alias for camelCase compatibility
+  'screenRecorder': EvalNodeRenderer  // Alias for camelCase compatibility
 };
 
 export default nodeTypes;

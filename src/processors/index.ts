@@ -358,9 +358,9 @@ export const NODE_REGISTRY: Record<string, NodeDefinition> = {
         description: node.description,
         icon: node.icon,
         color: node.color,
-        processorClass: EvalNodeRenderer,
-        schema: { inputs: node.inputs || [], outputs: node.outputs || [], config: [] },
-        defaultConfig: node.config || {}
+        processorClass: DefaultProcessor, // Use DefaultProcessor for eval nodes
+        schema: { inputs: node.inputs || [], outputs: node.outputs || [], config: node.config || [] },
+        defaultConfig: {}
       }
     ])
   )

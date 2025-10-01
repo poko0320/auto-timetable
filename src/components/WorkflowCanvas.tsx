@@ -114,21 +114,14 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect, evalModeE
         />
       </ReactFlow>
       
-      {/* Empty state illustration */}
+      {/* Simple empty state prompt */}
       {nodes.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center p-8 max-w-md">
-            <div className="text-6xl mb-4">⚡</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-3">
-              Start Building Your Workflow
-            </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Drag components from the left sidebar to create your automation workflow. 
-              Connect nodes by dragging from the output handle of one node to the input handle of another.
+          <div className="text-center">
+            <div className="text-4xl mb-3 text-gray-300">⚡</div>
+            <p className="text-gray-500 text-sm">
+              Drag nodes from the sidebar to start building
             </p>
-            <div className="mt-4 text-xs text-gray-400">
-              Tip: Use the AI assistant on the right to help you build workflows automatically
-            </div>
           </div>
         </div>
       )}

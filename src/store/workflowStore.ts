@@ -62,68 +62,9 @@ interface WorkflowStore {
 const workflowEngine = new WorkflowEngine();
 
 export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
-  // Initial state
-  nodes: [
-    {
-      id: '1',
-      type: 'start',
-      position: { x: 250, y: 100 },
-      data: {
-        label: 'Start',
-        type: 'start',
-        category: 'input-output',
-        status: 'idle',
-        config: {}
-      }
-    },
-    {
-      id: '2',
-      type: 'llm',
-      position: { x: 500, y: 100 },
-      data: {
-        label: 'LLM Processing',
-        type: 'llm',
-        category: 'ai-llm',
-        status: 'idle',
-        config: {
-          provider: 'openai',
-          model: 'gpt-3.5-turbo',
-          prompt: 'Process the input data: {{input}}',
-          temperature: 0.7,
-          maxTokens: 1000,
-          outputFormat: 'text'
-        }
-      }
-    },
-    {
-      id: '3',
-      type: 'end',
-      position: { x: 750, y: 100 },
-      data: {
-        label: 'End',
-        type: 'end',
-        category: 'input-output',
-        status: 'idle',
-        config: {}
-      }
-    }
-  ],
-  edges: [
-    {
-      id: 'e1-2',
-      source: '1',
-      target: '2',
-      type: 'smoothstep',
-      animated: true
-    },
-    {
-      id: 'e2-3',
-      source: '2',
-      target: '3',
-      type: 'smoothstep',
-      animated: true
-    }
-  ],
+  // Initial state - Start with empty canvas
+  nodes: [],
+  edges: [],
   isExecuting: false,
   executionLogs: [],
   selectedNodeId: null,
