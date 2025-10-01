@@ -12,7 +12,7 @@ const style: NodeStyle = {
 export const AutoTyperNode: React.FC<BaseNodeProps> = (props) => {
   const { data } = props;
   const config = data.config || {};
-  
+
   return (
     <BaseNode
       {...props}
@@ -37,9 +37,13 @@ export const AutoTyperNode: React.FC<BaseNodeProps> = (props) => {
         <div className="text-xs text-center text-gray-600">
           {config.typing_speed ? `${config.typing_speed} WPM` : '60 WPM'}
         </div>
+        <div className="flex flex-col gap-1 text-xs">
+          <span className="text-purple-700">Target: {config.target_app || 'Notepad'}</span>
+          <span className="text-purple-700">Message: {config.message || '...'}</span>
+        </div>
         <div className="flex justify-center">
           <div className="px-2 py-0.5 bg-purple-200 rounded text-xs text-purple-700">
-            ⌨️ Typing...
+            Typing...
           </div>
         </div>
       </div>

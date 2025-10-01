@@ -29,6 +29,8 @@ export { default as DelayNode } from './utilities/DelayNode';
 export { default as WebhookNode } from './utilities/WebhookNode';
 export { default as ScreenCaptureNode } from './utilities/ScreenCaptureNode';
 
+export { default as EvalNodeRenderer } from './eval/EvalNodeRenderer';
+
 // Base Node
 export { default as BaseNode } from './base/BaseNode';
 export type { BaseNodeProps, NodeStyle, BaseNodeConfig } from './base/BaseNode';

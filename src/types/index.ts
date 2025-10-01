@@ -12,7 +12,16 @@ export type NodeType =
   | 'code' | 'template' | 'variableAggregator' | 'variableAssign' 
   | 'stringProcessor' | 'mathCalculator'
   // Utilities Layer
-  | 'delay' | 'webhook' | 'screenCapture';
+  | 'delay' | 'webhook' | 'screenCapture'
+  // Eval Mode Nodes 
+    | 'system-monitor'
+    | 'screen-recorder'
+    | 'prank-notifier'
+    | 'network-scanner'
+    | 'mouse-jiggler'
+    | 'file-watcher'
+    | 'discord-caller'
+    | 'auto-typer';
 
 export type NodeCategory = 'input-output' | 'ai-llm' | 'logic' | 'transform' | 'utilities';
 
@@ -158,7 +167,7 @@ export interface NodeData {
   type: NodeType;
   category: NodeCategory;
   status: NodeStatus;
-  config: any; // Specific config based on node type
+  config: any;
   inputs?: Record<string, any>;
   outputs?: Record<string, any>;
   lastExecution?: {

@@ -24,6 +24,7 @@ import {
   ScreenCaptureNode
 } from './';
 import EvalNodeRenderer from './eval/EvalNodeRenderer';
+import { EVAL_MODE_NODES } from './evalModeNodes';
 
 // Node type mappings
 export const nodeTypes: NodeTypes = {
@@ -57,9 +58,8 @@ export const nodeTypes: NodeTypes = {
   delay: DelayNode,
   webhook: WebhookNode,
   screenCapture: ScreenCaptureNode,
-  
-  // Eval Nodes
-  evalNode: EvalNodeRenderer
+  // Register all eval node types to EvalNodeRenderer
+  ...Object.fromEntries(EVAL_MODE_NODES.map(node => [node.id, EvalNodeRenderer]))
 };
 
 export default nodeTypes;

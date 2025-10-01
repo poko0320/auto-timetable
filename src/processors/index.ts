@@ -8,6 +8,8 @@ import { CodeProcessor } from './CodeProcessor';
 import { StringProcessor } from './StringProcessor';
 import { MathCalculatorProcessor } from './MathCalculatorProcessor';
 import { ScreenCaptureProcessor } from './ScreenCaptureProcessor';
+import EvalNodeRenderer from '../components/nodes/eval/EvalNodeRenderer';
+import { EVAL_MODE_NODES } from '../components/nodes/evalModeNodes';
 
 // Simple processors for basic nodes
 class StartProcessor extends BaseProcessor {
@@ -62,7 +64,7 @@ class TemplateProcessor extends BaseProcessor {
 }
 
 // Node Registry - Only nodes we've actually implemented
-export const NODE_REGISTRY: Record<NodeType, NodeDefinition> = {
+export const NODE_REGISTRY: Record<string, NodeDefinition> = {
   // Input/Output Layer
   start: {
     type: 'start',
@@ -343,7 +345,25 @@ export const NODE_REGISTRY: Record<NodeType, NodeDefinition> = {
       outputPath: './screenshot.png',
       imageFormat: 'png'
     }
-  }
+  },
+
+  // --- Eval Mode Nodes ---
+  ...Object.fromEntries(
+    EVAL_MODE_NODES.map(node => [
+      node.id,
+      {
+        type: node.id,
+        category: node.category,
+        label: node.label,
+        description: node.description,
+        icon: node.icon,
+        color: node.color,
+        processorClass: EvalNodeRenderer,
+        schema: { inputs: node.inputs || [], outputs: node.outputs || [], config: [] },
+        defaultConfig: node.config || {}
+      }
+    ])
+  )
 };
 
 // Helper functions

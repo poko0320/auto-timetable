@@ -23,11 +23,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🔍',
     inputs: ['trigger'],
     outputs: ['process_detected', 'system_info'],
-    config: {
-      process_name: { type: 'text', label: 'Process Name', placeholder: 'Discord.exe' },
-      check_interval: { type: 'number', label: 'Check Interval (ms)', default: 5000 },
-      alert_threshold: { type: 'number', label: 'Alert Threshold', default: 1 }
-    }
+    config: [
+      { key: 'process_name', type: 'text', label: 'Process Name', placeholder: 'Discord.exe' },
+      { key: 'check_interval', type: 'number', label: 'Check Interval (ms)', default: 5000 },
+      { key: 'alert_threshold', type: 'number', label: 'Alert Threshold', default: 1 }
+    ]
   },
   
   {
@@ -39,11 +39,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '📞',
     inputs: ['friend_detected'],
     outputs: ['call_initiated', 'call_status'],
-    config: {
-      friend_username: { type: 'text', label: 'Friend Username', placeholder: 'friend#1234' },
-      call_message: { type: 'text', label: 'Call Message', default: 'Hey! Stop gaming and talk to me!' },
-      retry_attempts: { type: 'number', label: 'Retry Attempts', default: 3 }
-    }
+    config: [
+      { key: 'friend_username', type: 'text', label: 'Friend Username', placeholder: 'friend#1234' },
+      { key: 'call_message', type: 'text', label: 'Call Message', default: 'Hey! Stop gaming and talk to me!' },
+      { key: 'retry_attempts', type: 'number', label: 'Retry Attempts', default: 3 }
+    ]
   },
 
   {
@@ -55,11 +55,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🌐',
     inputs: ['scan_trigger'],
     outputs: ['devices_found', 'network_map'],
-    config: {
-      ip_range: { type: 'text', label: 'IP Range', default: '192.168.1.0/24' },
-      scan_ports: { type: 'text', label: 'Ports to Scan', default: '22,80,443' },
-      timeout: { type: 'number', label: 'Timeout (ms)', default: 3000 }
-    }
+    config: [
+      { key: 'ip_range', type: 'text', label: 'IP Range', default: '192.168.1.0/24' },
+      { key: 'scan_ports', type: 'text', label: 'Ports to Scan', default: '22,80,443' },
+      { key: 'timeout', type: 'number', label: 'Timeout (ms)', default: 3000 }
+    ]
   },
 
   {
@@ -71,11 +71,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '😈',
     inputs: ['trigger'],
     outputs: ['notification_sent'],
-    config: {
-      message: { type: 'text', label: 'Prank Message', default: 'Your computer has been hacked! Just kidding 😄' },
-      notification_type: { type: 'select', label: 'Type', options: ['toast', 'modal', 'sound'] },
-      delay: { type: 'number', label: 'Delay (seconds)', default: 5 }
-    }
+    config: [
+      { key: 'message', type: 'text', label: 'Prank Message', default: 'Your computer has been hacked! Just kidding 😄' },
+      { key: 'notification_type', type: 'select', label: 'Type', options: ['toast', 'modal', 'sound'] },
+      { key: 'delay', type: 'number', label: 'Delay (seconds)', default: 5 }
+    ]
   },
 
   {
@@ -87,11 +87,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '⌨️',
     inputs: ['text_input'],
     outputs: ['typing_complete'],
-    config: {
-      typing_speed: { type: 'number', label: 'Typing Speed (WPM)', default: 60 },
-      target_app: { type: 'text', label: 'Target Application', placeholder: 'Notepad' },
-      message: { type: 'textarea', label: 'Message to Type', rows: 3 }
-    }
+    config: [
+      { key: 'typing_speed', type: 'number', label: 'Typing Speed (WPM)', default: 60 },
+      { key: 'target_app', type: 'text', label: 'Target Application', placeholder: 'Notepad' },
+      { key: 'message', type: 'textarea', label: 'Message to Type', rows: 3 }
+    ]
   },
 
   {
@@ -103,14 +103,10 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '💻',
     inputs: ['info_request'],
     outputs: ['cpu_info', 'memory_info', 'disk_info'],
-    config: {
-      info_types: { 
-        type: 'multi-select', 
-        label: 'Information Types', 
-        options: ['CPU', 'Memory', 'Disk', 'Network', 'Processes'] 
-      },
-      refresh_interval: { type: 'number', label: 'Refresh Interval (seconds)', default: 10 }
-    }
+    config: [
+      { key: 'info_types', type: 'multi-select', label: 'Information Types', options: ['CPU', 'Memory', 'Disk', 'Network', 'Processes'] },
+      { key: 'refresh_interval', type: 'number', label: 'Refresh Interval (seconds)', default: 10 }
+    ]
   },
 
   {
@@ -122,11 +118,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '👁️',
     inputs: ['watch_path'],
     outputs: ['file_changed', 'file_created', 'file_deleted'],
-    config: {
-      watch_directory: { type: 'text', label: 'Directory to Watch', placeholder: '/path/to/watch' },
-      file_types: { type: 'text', label: 'File Types', default: '*.*' },
-      recursive: { type: 'boolean', label: 'Watch Subdirectories', default: true }
-    }
+    config: [
+      { key: 'watch_directory', type: 'text', label: 'Directory to Watch', placeholder: '/path/to/watch' },
+      { key: 'file_types', type: 'text', label: 'File Types', default: '*.*' },
+      { key: 'recursive', type: 'boolean', label: 'Watch Subdirectories', default: true }
+    ]
   },
 
   {
@@ -138,11 +134,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🔍',
     inputs: ['target_host'],
     outputs: ['open_ports', 'scan_results'],
-    config: {
-      host: { type: 'text', label: 'Target Host', default: 'localhost' },
-      port_range: { type: 'text', label: 'Port Range', default: '1-1000' },
-      scan_type: { type: 'select', label: 'Scan Type', options: ['TCP', 'UDP', 'SYN'] }
-    }
+    config: [
+      { key: 'host', type: 'text', label: 'Target Host', default: 'localhost' },
+      { key: 'port_range', type: 'text', label: 'Port Range', default: '1-1000' },
+      { key: 'scan_type', type: 'select', label: 'Scan Type', options: ['TCP', 'UDP', 'SYN'] }
+    ]
   },
 
   {
@@ -154,11 +150,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🌍',
     inputs: ['domain_name'],
     outputs: ['ip_address', 'dns_records'],
-    config: {
-      domain: { type: 'text', label: 'Domain Name', placeholder: 'example.com' },
-      record_type: { type: 'select', label: 'Record Type', options: ['A', 'AAAA', 'MX', 'TXT', 'CNAME'] },
-      dns_server: { type: 'text', label: 'DNS Server', default: '8.8.8.8' }
-    }
+    config: [
+      { key: 'domain', type: 'text', label: 'Domain Name', placeholder: 'example.com' },
+      { key: 'record_type', type: 'select', label: 'Record Type', options: ['A', 'AAAA', 'MX', 'TXT', 'CNAME'] },
+      { key: 'dns_server', type: 'text', label: 'DNS Server', default: '8.8.8.8' }
+    ]
   },
 
   {
@@ -170,11 +166,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '💥',
     inputs: ['trigger'],
     outputs: ['crash_displayed'],
-    config: {
-      crash_type: { type: 'select', label: 'Crash Type', options: ['Blue Screen', 'Kernel Panic', 'System Error'] },
-      duration: { type: 'number', label: 'Duration (seconds)', default: 10 },
-      exit_key: { type: 'text', label: 'Exit Key', default: 'ESC' }
-    }
+    config: [
+      { key: 'crash_type', type: 'select', label: 'Crash Type', options: ['Blue Screen', 'Kernel Panic', 'System Error'] },
+      { key: 'duration', type: 'number', label: 'Duration (seconds)', default: 10 },
+      { key: 'exit_key', type: 'text', label: 'Exit Key', default: 'ESC' }
+    ]
   },
 
   {
@@ -186,11 +182,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🎥',
     inputs: ['start_recording'],
     outputs: ['recording_file', 'recording_stopped'],
-    config: {
-      output_format: { type: 'select', label: 'Output Format', options: ['MP4', 'AVI', 'GIF'] },
-      quality: { type: 'select', label: 'Quality', options: ['Low', 'Medium', 'High'] },
-      capture_area: { type: 'select', label: 'Capture Area', options: ['Full Screen', 'Window', 'Custom'] }
-    }
+    config: [
+      { key: 'output_format', type: 'select', label: 'Output Format', options: ['MP4', 'AVI', 'GIF'] },
+      { key: 'quality', type: 'select', label: 'Quality', options: ['Low', 'Medium', 'High'] },
+      { key: 'capture_area', type: 'select', label: 'Capture Area', options: ['Full Screen', 'Window', 'Custom'] }
+    ]
   },
 
   {
@@ -202,11 +198,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🖱️',
     inputs: ['activate'],
     outputs: ['mouse_moved'],
-    config: {
-      movement_distance: { type: 'number', label: 'Movement Distance (pixels)', default: 1 },
-      interval: { type: 'number', label: 'Interval (seconds)', default: 60 },
-      pattern: { type: 'select', label: 'Movement Pattern', options: ['Random', 'Circle', 'Square'] }
-    }
+    config: [
+      { key: 'movement_distance', type: 'number', label: 'Movement Distance (pixels)', default: 1 },
+      { key: 'interval', type: 'number', label: 'Interval (seconds)', default: 60 },
+      { key: 'pattern', type: 'select', label: 'Movement Pattern', options: ['Random', 'Circle', 'Square'] }
+    ]
   },
 
   {
@@ -218,11 +214,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '⌨️',
     inputs: ['start_logging'],
     outputs: ['key_pressed', 'log_file'],
-    config: {
-      log_file: { type: 'text', label: 'Log File Path', default: './keylog.txt' },
-      filter_passwords: { type: 'boolean', label: 'Filter Password Fields', default: true },
-      log_format: { type: 'select', label: 'Log Format', options: ['Plain Text', 'JSON', 'CSV'] }
-    }
+    config: [
+      { key: 'log_file', type: 'text', label: 'Log File Path', default: './keylog.txt' },
+      { key: 'filter_passwords', type: 'boolean', label: 'Filter Password Fields', default: true },
+      { key: 'log_format', type: 'select', label: 'Log Format', options: ['Plain Text', 'JSON', 'CSV'] }
+    ]
   },
 
   {
@@ -234,11 +230,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🕷️',
     inputs: ['start_url'],
     outputs: ['crawled_data', 'links_found'],
-    config: {
-      max_depth: { type: 'number', label: 'Max Crawl Depth', default: 3 },
-      delay: { type: 'number', label: 'Delay Between Requests (ms)', default: 1000 },
-      user_agent: { type: 'text', label: 'User Agent', default: 'AutoFlow-Bot/1.0' }
-    }
+    config: [
+      { key: 'max_depth', type: 'number', label: 'Max Crawl Depth', default: 3 },
+      { key: 'delay', type: 'number', label: 'Delay Between Requests (ms)', default: 1000 },
+      { key: 'user_agent', type: 'text', label: 'User Agent', default: 'AutoFlow-Bot/1.0' }
+    ]
   },
 
   {
@@ -250,11 +246,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🪟',
     inputs: ['target_window'],
     outputs: ['window_moved'],
-    config: {
-      window_title: { type: 'text', label: 'Window Title', placeholder: 'Calculator' },
-      action: { type: 'select', label: 'Action', options: ['Move', 'Resize', 'Minimize', 'Shake'] },
-      repeat_count: { type: 'number', label: 'Repeat Count', default: 5 }
-    }
+    config: [
+      { key: 'window_title', type: 'text', label: 'Window Title', placeholder: 'Calculator' },
+      { key: 'action', type: 'select', label: 'Action', options: ['Move', 'Resize', 'Minimize', 'Shake'] },
+      { key: 'repeat_count', type: 'number', label: 'Repeat Count', default: 5 }
+    ]
   },
 
   {
@@ -266,11 +262,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🔊',
     inputs: ['play_trigger'],
     outputs: ['sound_played'],
-    config: {
-      sound_file: { type: 'file', label: 'Sound File', accept: 'audio/*' },
-      volume: { type: 'range', label: 'Volume', min: 0, max: 100, default: 50 },
-      loop: { type: 'boolean', label: 'Loop Sound', default: false }
-    }
+    config: [
+      { key: 'sound_file', type: 'file', label: 'Sound File', accept: 'audio/*' },
+      { key: 'volume', type: 'range', label: 'Volume', min: 0, max: 100, default: 50 },
+      { key: 'loop', type: 'boolean', label: 'Loop Sound', default: false }
+    ]
   },
 
   {
@@ -282,14 +278,10 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '📋',
     inputs: ['start_monitoring'],
     outputs: ['clipboard_changed', 'clipboard_content'],
-    config: {
-      content_types: { 
-        type: 'multi-select', 
-        label: 'Monitor Content Types', 
-        options: ['Text', 'Images', 'Files'] 
-      },
-      log_changes: { type: 'boolean', label: 'Log All Changes', default: false }
-    }
+    config: [
+      { key: 'content_types', type: 'multi-select', label: 'Monitor Content Types', options: ['Text', 'Images', 'Files'] },
+      { key: 'log_changes', type: 'boolean', label: 'Log All Changes', default: false }
+    ]
   },
 
   {
@@ -301,11 +293,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '💀',
     inputs: ['process_name'],
     outputs: ['process_killed'],
-    config: {
-      process_name: { type: 'text', label: 'Process Name', placeholder: 'notepad.exe' },
-      force_kill: { type: 'boolean', label: 'Force Kill', default: false },
-      confirm_before_kill: { type: 'boolean', label: 'Confirm Before Kill', default: true }
-    }
+    config: [
+      { key: 'process_name', type: 'text', label: 'Process Name', placeholder: 'notepad.exe' },
+      { key: 'force_kill', type: 'boolean', label: 'Force Kill', default: false },
+      { key: 'confirm_before_kill', type: 'boolean', label: 'Confirm Before Kill', default: true }
+    ]
   },
 
   {
@@ -317,11 +309,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '📊',
     inputs: ['start_monitoring'],
     outputs: ['traffic_data', 'bandwidth_usage'],
-    config: {
-      interface: { type: 'select', label: 'Network Interface', options: ['All', 'WiFi', 'Ethernet'] },
-      sample_interval: { type: 'number', label: 'Sample Interval (seconds)', default: 5 },
-      data_format: { type: 'select', label: 'Data Format', options: ['Bytes', 'KB', 'MB'] }
-    }
+    config: [
+      { key: 'interface', type: 'select', label: 'Network Interface', options: ['All', 'WiFi', 'Ethernet'] },
+      { key: 'sample_interval', type: 'number', label: 'Sample Interval (seconds)', default: 5 },
+      { key: 'data_format', type: 'select', label: 'Data Format', options: ['Bytes', 'KB', 'MB'] }
+    ]
   },
 
   {
@@ -333,11 +325,11 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
     icon: '🖼️',
     inputs: ['image_path'],
     outputs: ['wallpaper_changed'],
-    config: {
-      image_path: { type: 'file', label: 'Image File', accept: 'image/*' },
-      restore_original: { type: 'boolean', label: 'Restore Original After', default: true },
-      restore_delay: { type: 'number', label: 'Restore Delay (minutes)', default: 5 }
-    }
+    config: [
+      { key: 'image_path', type: 'file', label: 'Image File', accept: 'image/*' },
+      { key: 'restore_original', type: 'boolean', label: 'Restore Original After', default: true },
+      { key: 'restore_delay', type: 'number', label: 'Restore Delay (minutes)', default: 5 }
+    ]
   }
 ];
 
