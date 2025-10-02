@@ -1,4 +1,3 @@
-// Extended node definitions for Eval Mode
 export interface EvalModeNodeDefinition {
   id: string;
   label: string;
@@ -11,9 +10,9 @@ export interface EvalModeNodeDefinition {
   config: Record<string, any>;
 }
 
-// Eval Mode 特殊节点定义
+import { NodeCategory } from '../../types';
+
 export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
-  // 系统监控节点
   {
     id: 'system-monitor',
     label: 'System Monitor',
@@ -333,7 +332,6 @@ export const EVAL_MODE_NODES: EvalModeNodeDefinition[] = [
   }
 ];
 
-// Eval Mode 节点分类
 export const EVAL_CATEGORIES = {
   'system': {
     label: '⚠️ System Control',
@@ -357,17 +355,14 @@ export const EVAL_CATEGORIES = {
   }
 };
 
-// 检查是否为 Eval Mode 节点
 export function isEvalModeNode(nodeType: string): boolean {
   return EVAL_MODE_NODES.some(node => node.id === nodeType);
 }
 
-// 获取 Eval Mode 节点
 export function getEvalModeNode(nodeType: string): EvalModeNodeDefinition | undefined {
   return EVAL_MODE_NODES.find(node => node.id === nodeType);
 }
 
-// 获取按分类分组的 Eval Mode 节点
 export function getEvalModeNodesByCategory(): Record<string, EvalModeNodeDefinition[]> {
   const grouped: Record<string, EvalModeNodeDefinition[]> = {};
   

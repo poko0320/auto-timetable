@@ -26,7 +26,6 @@ const AIChatPanel: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 自动滚动到最新消息
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -352,7 +351,6 @@ const AIChatPanel: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col overflow-hidden min-w-0">
-      {/* Messages - 严格控制高度 */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 min-w-0">
         {messages.map((message) => (
           <div
@@ -404,13 +402,10 @@ const AIChatPanel: React.FC = () => {
           </div>
         )}
         
-        {/* 用于自动滚动的锚点 */}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 底部固定区域 - Quick Prompts + Input */}
       <div className="flex-shrink-0 bg-white border-t border-gray-100 min-w-0">
-        {/* Quick Prompts */}
         <div className="p-3 border-b border-gray-100">
           <p className="text-xs text-gray-500 mb-2">Quick prompts:</p>
           <div className="space-y-1">

@@ -64,13 +64,10 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect, evalModeE
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-    console.log('Node clicked:', node); // 调试日志
-    selectNode(node.id);
+  const handleNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    console.log('Node clicked:', node);
     onNodeSelect?.(node);
-  }, [selectNode, onNodeSelect]);
-
-  // Update edge animation is now handled by the store
+  }, [onNodeSelect]);
 
   return (
     <div className="flex-1 h-full bg-gray-50">
@@ -82,7 +79,7 @@ const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({ onNodeSelect, evalModeE
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onNodeClick={onNodeClick}
+        onNodeClick={handleNodeClick}
         nodeTypes={nodeTypes}
         snapToGrid={true}
         snapGrid={[20, 20]}

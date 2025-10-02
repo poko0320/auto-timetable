@@ -6,11 +6,9 @@ export class ScreenCaptureProcessor extends BaseProcessor {
     const config = input.config || {};
     
     try {
-      // 模拟屏幕捕捉功能
       const captureMode = config.captureMode || 'fullScreen';
       const outputPath = config.outputPath || './screenshot.png';
       
-      // 在实际应用中，这里会调用系统API进行屏幕捕捉
       console.log(`Capturing screen in ${captureMode} mode...`);
       
       return {

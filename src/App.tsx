@@ -22,16 +22,13 @@ import {
 function App() {
   const { selectedNodeId, selectNode, isPropertiesPanelOpen, togglePropertiesPanel } = useWorkflowStore();
   
-  // 页面状态
   const [currentPage, setCurrentPage] = useState('workflow');
   const [evalModeEnabled, setEvalModeEnabled] = useState(false);
   const [evalModeConfirmed, setEvalModeConfirmed] = useState(false);
   
-  // 面板折叠状态
   const [isAIPanelCollapsed, setIsAIPanelCollapsed] = useState(false);
-  const [isLogPanelCollapsed, setIsLogPanelCollapsed] = useState(true); // 默认折叠
+  const [isLogPanelCollapsed, setIsLogPanelCollapsed] = useState(true);
   
-  // 选中的节点状态
   const [selectedNode, setSelectedNode] = useState<any>(null);
 
   const handleNodeSelect = (node: any) => {
@@ -63,7 +60,6 @@ function App() {
     }
   };
 
-  // 如果不是工作流页面，显示对应页面
   if (currentPage === 'templates') {
     return (
       <ToastProvider>
@@ -102,12 +98,10 @@ function App() {
     );
   }
 
-  // 工作流页面 - 传统侧边栏布局
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       <ErrorBoundary fallback={<div className="p-4 text-red-500">Application error</div>}>
         <ToastProvider>
-          {/* 顶部工具栏 */}
           <TopBar 
             currentPage={currentPage} 
             onPageChange={handlePageChange}
@@ -116,16 +110,12 @@ function App() {
             onEvalModeToggle={handleEvalModeToggle}
           />
           
-          {/* 主要内容区域 - 传统侧边栏布局 */}
           <div className="flex-1 flex overflow-hidden">
-            {/* 左侧边栏 - Workflow Nodes */}
             <ErrorBoundary fallback={<div className="p-4 text-gray-500">Sidebar error</div>}>
               <Sidebar evalModeEnabled={evalModeEnabled} />
             </ErrorBoundary>
 
-            {/* 中央内容区域 */}
             <div className="flex-1 flex flex-col overflow-hidden">
-              {/* 主画布区域 */}
               <div className="flex-1 overflow-hidden">
                 <ErrorBoundary fallback={
                   <div className="w-full h-full flex items-center justify-center bg-gray-50">
@@ -136,7 +126,6 @@ function App() {
                 </ErrorBoundary>
               </div>
 
-              {/* 底部 - Execution Logs */}
               <div className={`${isLogPanelCollapsed ? 'h-12' : 'h-64'} border-t border-gray-200 bg-white transition-all duration-300`}>
                 <div className="h-full flex flex-col">
                   <div className="p-3 border-b border-gray-200 bg-gray-50">
@@ -167,9 +156,7 @@ function App() {
               </div>
             </div>
 
-            {/* 右侧面板 - 完全独立 */}
             <div className={`${isAIPanelCollapsed ? 'w-12' : 'w-80'} flex flex-col border-l border-gray-200 bg-white transition-all duration-300 overflow-hidden min-w-0`}>
-              {/* AI Assistant */}
               <div className={`${isPropertiesPanelOpen && selectedNode && !isAIPanelCollapsed ? 'min-h-0 flex-1' : 'flex-1'} flex flex-col border-b border-gray-200 overflow-hidden min-w-0`}>
                 <div className="p-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
                   <div className="flex items-center justify-between">
@@ -197,7 +184,6 @@ function App() {
                 )}
               </div>
 
-              {/* Node Properties (当选中节点时显示) */}
               {isPropertiesPanelOpen && selectedNode && !isAIPanelCollapsed && (
                 <div className="h-80 flex flex-col border-t border-gray-200 overflow-hidden min-w-0">
                   <div className="p-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">

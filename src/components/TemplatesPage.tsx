@@ -433,10 +433,8 @@ export default function TemplatesPage({ onPageChange }: TemplatesPageProps = {})
       
       console.log('Template imported successfully:', template.name);
       
-      // 等待一小段时间显示反馈
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // 切换到工作流页面
       if (onPageChange) {
         onPageChange('workflow');
       }
