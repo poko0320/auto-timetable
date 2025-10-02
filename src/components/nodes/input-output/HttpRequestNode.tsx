@@ -21,19 +21,19 @@ export const HttpRequestNode: React.FC<BaseNodeProps> = (props) => {
       hasInput={true}
       hasOutput={true}
     >
-      <div className="space-y-2">
-        <div className="text-xs text-gray-600">
+      <div className="space-y-2 overflow-hidden">
+        <div className="text-xs text-gray-600 truncate">
           HTTP Request Handler
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex-1">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="flex-1 min-w-0">
             {config.method && (
-              <div className="text-xs font-mono bg-blue-100 px-2 py-1 rounded text-blue-800">
+              <div className="text-xs font-mono bg-blue-100 px-2 py-1 rounded text-blue-800 truncate">
                 {config.method.toUpperCase()}
               </div>
             )}
           </div>
-          <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center flex-shrink-0">
             <Globe size={12} className="text-white" />
           </div>
         </div>

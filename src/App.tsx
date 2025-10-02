@@ -168,20 +168,20 @@ function App() {
             </div>
 
             {/* 右侧面板 - 完全独立 */}
-            <div className={`${isAIPanelCollapsed ? 'w-12' : 'w-80'} flex flex-col border-l border-gray-200 bg-white transition-all duration-300`}>
+            <div className={`${isAIPanelCollapsed ? 'w-12' : 'w-80'} flex flex-col border-l border-gray-200 bg-white transition-all duration-300 overflow-hidden min-w-0`}>
               {/* AI Assistant */}
-              <div className={`${isPropertiesPanelOpen && selectedNode && !isAIPanelCollapsed ? 'min-h-0 flex-1' : 'flex-1'} flex flex-col border-b border-gray-200`}>
-                <div className="p-3 border-b border-gray-200 bg-gray-50">
+              <div className={`${isPropertiesPanelOpen && selectedNode && !isAIPanelCollapsed ? 'min-h-0 flex-1' : 'flex-1'} flex flex-col border-b border-gray-200 overflow-hidden min-w-0`}>
+                <div className="p-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-gray-900 flex items-center space-x-2">
-                      <div className="p-1 bg-purple-100 rounded">
+                    <h3 className="font-medium text-gray-900 flex items-center space-x-2 min-w-0">
+                      <div className="p-1 bg-purple-100 rounded flex-shrink-0">
                         <MessageSquare size={14} className="text-purple-600" />
                       </div>
-                      {!isAIPanelCollapsed && <span className="text-sm">AI Assistant</span>}
+                      {!isAIPanelCollapsed && <span className="text-sm truncate">AI Assistant</span>}
                     </h3>
                     <button
                       onClick={() => setIsAIPanelCollapsed(!isAIPanelCollapsed)}
-                      className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                      className="p-1 text-gray-400 hover:text-gray-600 rounded flex-shrink-0"
                       title={isAIPanelCollapsed ? 'Expand AI Assistant' : 'Collapse AI Assistant'}
                     >
                       {isAIPanelCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -189,7 +189,7 @@ function App() {
                   </div>
                 </div>
                 {!isAIPanelCollapsed && (
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-hidden min-w-0">
                     <ErrorBoundary fallback={<div className="p-4 text-gray-500">Chat panel error</div>}>
                       <AIChatPanel />
                     </ErrorBoundary>
@@ -199,24 +199,24 @@ function App() {
 
               {/* Node Properties (当选中节点时显示) */}
               {isPropertiesPanelOpen && selectedNode && !isAIPanelCollapsed && (
-                <div className="h-80 flex flex-col border-t border-gray-200">
-                  <div className="p-3 border-b border-gray-200 bg-gray-50">
+                <div className="h-80 flex flex-col border-t border-gray-200 overflow-hidden min-w-0">
+                  <div className="p-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-gray-900 flex items-center space-x-2">
-                        <div className="p-1 bg-indigo-100 rounded">
+                      <h3 className="font-medium text-gray-900 flex items-center space-x-2 min-w-0">
+                        <div className="p-1 bg-indigo-100 rounded flex-shrink-0">
                           <Settings2 size={14} className="text-indigo-600" />
                         </div>
-                        <span className="text-sm">Properties</span>
+                        <span className="text-sm truncate">Properties</span>
                       </h3>
                       <button
                         onClick={handleCloseProperties}
-                        className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                        className="p-1 text-gray-400 hover:text-gray-600 rounded flex-shrink-0"
                       >
                         <X size={14} />
                       </button>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-hidden min-w-0">
                     <ErrorBoundary fallback={<div className="p-4 text-gray-500">Properties panel error</div>}>
                       <NodePropertiesPanel node={selectedNode} onClose={handleCloseProperties} />
                     </ErrorBoundary>

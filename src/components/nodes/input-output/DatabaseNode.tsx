@@ -21,26 +21,26 @@ export const DatabaseNode: React.FC<BaseNodeProps> = (props) => {
       hasInput={true}
       hasOutput={true}
     >
-      <div className="space-y-2">
-        <div className="text-xs text-gray-600">
+      <div className="space-y-2 overflow-hidden">
+        <div className="text-xs text-gray-600 truncate">
           Database Operations
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex-1">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="flex-1 min-w-0">
             {config.operation && (
-              <div className="text-xs font-mono bg-purple-100 px-2 py-1 rounded text-purple-800">
+              <div className="text-xs font-mono bg-purple-100 px-2 py-1 rounded text-purple-800 truncate">
                 {config.operation.toUpperCase()}
               </div>
             )}
           </div>
-          <div className="flex flex-col space-y-0.5">
+          <div className="flex flex-col gap-0.5 flex-shrink-0">
             <div className="w-4 h-1 bg-purple-400 rounded"></div>
             <div className="w-4 h-1 bg-purple-500 rounded"></div>
             <div className="w-4 h-1 bg-purple-600 rounded"></div>
           </div>
         </div>
         {config.table && (
-          <div className="text-xs text-gray-500 font-mono bg-gray-50 px-2 py-1 rounded">
+          <div className="text-xs text-gray-500 font-mono bg-gray-50 px-2 py-1 rounded truncate">
             Table: {config.table}
           </div>
         )}

@@ -18,12 +18,12 @@ export const StartNode: React.FC<BaseNodeProps> = (props) => {
       hasInput={false}
       hasOutput={true}
     >
-      <div className="space-y-2">
-        <div className="text-xs text-gray-600">
+      <div className="space-y-2 overflow-hidden">
+        <div className="text-xs text-gray-600 truncate">
           Workflow Entry Point
         </div>
         <div className="flex items-center justify-center">
-          <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse">
+          <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse flex-shrink-0">
             <Play size={14} className="text-white ml-0.5" />
           </div>
         </div>

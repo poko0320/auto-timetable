@@ -63,7 +63,7 @@ export const BaseNode: React.FC<BaseNodeProps & BaseNodeConfig & { children?: Re
   return (
     <div className={`
       relative rounded-lg border-2 transition-all duration-200 cursor-pointer
-      min-w-[160px] max-w-[200px] p-0 overflow-hidden
+      w-[200px] p-0 overflow-hidden
       ${selected ? 'ring-2 ring-blue-400 ring-offset-2 shadow-lg' : 'shadow-sm hover:shadow-md'}
       ${data.status === 'running' ? 'ring-2 ring-blue-400 shadow-lg' : ''}
       ${data.status === 'success' ? 'ring-2 ring-green-400 shadow-lg' : ''}
@@ -127,24 +127,24 @@ export const BaseNode: React.FC<BaseNodeProps & BaseNodeConfig & { children?: Re
       
       {/* Node Header */}
       <div className="relative px-3 py-2 bg-white/90 backdrop-blur-sm border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className={`p-1.5 rounded-md ${style.icon} ${style.bg}`}>
+        <div className="flex items-center justify-between gap-2 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className={`p-1.5 rounded-md ${style.icon} ${style.bg} flex-shrink-0`}>
               <Icon size={14} />
             </div>
-            <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide truncate">
               {data.type}
             </span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             {getStatusIcon(data.status)}
           </div>
         </div>
       </div>
 
       {/* Node Content */}
-      <div className="relative px-3 py-3">
-        <div className="text-sm font-medium text-gray-900 leading-tight mb-2">
+      <div className="relative px-3 py-3 overflow-hidden">
+        <div className="text-sm font-medium text-gray-900 leading-tight mb-2 break-words">
           {data.label}
         </div>
         
