@@ -18,12 +18,12 @@ export const EndNode: React.FC<BaseNodeProps> = (props) => {
       hasInput={true}
       hasOutput={false}
     >
-      <div className="space-y-2">
-        <div className="text-xs text-gray-600">
+      <div className="space-y-2 overflow-hidden">
+        <div className="text-xs text-gray-600 truncate">
           Workflow Termination
         </div>
         <div className="flex items-center justify-center">
-          <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
+          <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
             <Square size={12} className="text-white fill-current" />
           </div>
         </div>

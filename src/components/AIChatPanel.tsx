@@ -351,16 +351,16 @@ const AIChatPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden min-w-0">
       {/* Messages - 严格控制高度 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 min-w-0">
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} min-w-0`}
           >
-            <div className={`flex max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-2`}>
-              <div className={`p-2 rounded-full flex-shrink-0 ${message.type === 'user' ? 'bg-blue-100 ml-2' : 'bg-gray-100 mr-2'}`}>
+            <div className={`flex ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start gap-2 max-w-[80%] min-w-0`}>
+              <div className={`p-2 rounded-full flex-shrink-0 ${message.type === 'user' ? 'bg-blue-100' : 'bg-gray-100'}`}>
                 {message.type === 'user' ? (
                   <User className="w-4 h-4 text-blue-600" />
                 ) : (
@@ -368,13 +368,14 @@ const AIChatPanel: React.FC = () => {
                 )}
               </div>
               <div
-                className={`p-3 rounded-lg ${
+                className={`p-3 rounded-lg overflow-hidden ${
                   message.type === 'user'
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-900'
                 }`}
+                style={{ minWidth: 0 }}
               >
-                <p className="text-sm break-words overflow-wrap-anywhere">{message.content}</p>
+                <p className="text-sm break-words whitespace-pre-wrap" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{message.content}</p>
                 <p className={`text-xs mt-1 ${
                   message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                 }`}>
@@ -386,17 +387,17 @@ const AIChatPanel: React.FC = () => {
         ))}
         
         {isGenerating && (
-          <div className="flex justify-start">
-            <div className="flex items-start space-x-2">
+          <div className="flex justify-start min-w-0">
+            <div className="flex max-w-[80%] items-start gap-2 min-w-0">
               <div className="p-2 rounded-full bg-gray-100 flex-shrink-0">
                 <Bot className="w-4 h-4 text-gray-600" />
               </div>
-              <div className="bg-gray-100 text-gray-900 p-3 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin">
+              <div className="bg-gray-100 text-gray-900 p-3 rounded-lg overflow-hidden" style={{ minWidth: 0 }}>
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin flex-shrink-0">
                     <Sparkles className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">Generating workflow...</span>
+                  <span className="text-sm whitespace-nowrap">Generating workflow...</span>
                 </div>
               </div>
             </div>
@@ -408,7 +409,7 @@ const AIChatPanel: React.FC = () => {
       </div>
 
       {/* 底部固定区域 - Quick Prompts + Input */}
-      <div className="flex-shrink-0 bg-white border-t border-gray-100">
+      <div className="flex-shrink-0 bg-white border-t border-gray-100 min-w-0">
         {/* Quick Prompts */}
         <div className="p-3 border-b border-gray-100">
           <p className="text-xs text-gray-500 mb-2">Quick prompts:</p>
@@ -426,14 +427,14 @@ const AIChatPanel: React.FC = () => {
         </div>
 
         {/* Input */}
-        <div className="p-3">
-          <div className="flex space-x-2">
+        <div className="p-3 min-w-0">
+          <div className="flex gap-2 min-w-0">
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Describe the workflow you want to create..."
-              className="flex-1 p-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 min-w-0 p-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows={2}
             />
             <button
